@@ -67,8 +67,11 @@ namespace NDesk.DBus
 			isConnected = false;
 
 			// Ensure that the reading thread closes down.
-			signalThread.Interrupt();
-			signalThread.Abort();
+			while (signalThread.IsAlive)
+			{
+				signalThread.Interrupt();
+				signalThread.Abort();
+			}
 		}
 
 		//should we do connection sharing here?
