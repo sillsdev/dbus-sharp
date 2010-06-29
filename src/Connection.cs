@@ -159,10 +159,10 @@ namespace NDesk.DBus
 		{
 			// if a seperate thread is handling receiving messages.
 			if (signalThread.IsAlive) {
-					// wait until receving thread calls waitForReplyEvent.
-					SendWithReply (msg);
-					waitForReplyEvent.WaitOne ();
-					return returnMessage;
+				// wait until receving thread calls waitForReplyEvent.
+				SendWithReply (msg);
+				waitForReplyEvent.WaitOne ();
+				return returnMessage;
 			}
 			else {
 				PendingCall pending = SendWithReply (msg);
@@ -265,9 +265,9 @@ namespace NDesk.DBus
 
 		/// <summary>
 		/// Thread method that reads from a connections while it is connected
-		/// and emits any signals it recieves.
-		/// If a Return message is recived it will comminicate to another thread
-		/// that involked the method that expected a return.
+		/// and emits any signals it receives.
+		/// If a return message is received it will communicate to the thread
+		/// that invoked the method that expected a return.
 		/// This thread assumes the underlying transport is blocking.
 		/// </summary>
 		private static void SignalListerThread(object connectionObject)
@@ -302,8 +302,7 @@ namespace NDesk.DBus
 		//temporary hack
 		public void Iterate ()
 		{
-			lock (transport)
-			{
+			lock (transport) {
 				mainThread = Thread.CurrentThread;
 
 				//Message msg = Inbound.Dequeue ();
