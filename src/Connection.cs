@@ -38,6 +38,11 @@ namespace NDesk.DBus
 		{
 			OpenPrivate (address);
 			Authenticate ();
+
+			// From now on all reading is done by a seperate thread.
+			// this allows signals to be received when they arrive and
+			// not synchronised to method calls.
+			signalThread.Start(this);
 		}
 
 		internal bool isConnected = false;
@@ -60,6 +65,10 @@ namespace NDesk.DBus
 
 			transport.Disconnect ();
 			isConnected = false;
+
+			// Ensure that the reading thread closes down.
+			signalThread.Interrupt();
+			signalThread.Abort();
 		}
 
 		//should we do connection sharing here?
@@ -134,10 +143,31 @@ namespace NDesk.DBus
 			return (uint)Interlocked.Increment (ref serial);
 		}
 
+		/// <summary>
+		/// Block thread until the reading thread has read a reply message
+		/// </summary>
+		private AutoResetEvent waitForReplyEvent = new AutoResetEvent(false);
+
+		/// <summary>
+		/// Used to return a reply message from the reading thread.
+		/// </summary>
+		private Message returnMessage;
+
 		internal Message SendWithReplyAndBlock (Message msg)
 		{
-			PendingCall pending = SendWithReply (msg);
-			return pending.Reply;
+			// if a seperate thread is handling receiving messages.
+			if (signalThread.IsAlive)
+			{
+					// wait until receving thread calls waitForReplyEvent.
+					SendWithReply (msg);
+					waitForReplyEvent.WaitOne();
+					return returnMessage;
+			}
+			else
+			{
+				PendingCall pending = SendWithReply (msg);
+				return pending.Reply;
+			}
 		}
 
 		internal PendingCall SendWithReply (Message msg)
@@ -231,16 +261,61 @@ namespace NDesk.DBus
 
 		internal Thread mainThread = Thread.CurrentThread;
 
+		internal Thread signalThread = new Thread(new ParameterizedThreadStart(SignalListerThread));
+
+		/// <summary>
+		/// Thread method that reads from a connections while it is connected
+		/// and emits any signals it recieves.
+		/// If a Return message is recived it will comminicate to another thread
+		/// that involked the method that expected a return.
+		/// This thread assumes the underlying transport is blocking.
+		/// </summary>
+		private static void SignalListerThread(object connectionObject)
+		{
+			if (connectionObject == null)
+				throw new ArgumentNullException();
+
+			Connection connection = connectionObject as Connection;
+
+			if (connection == null)
+				throw new ArgumentException();
+
+			if (connection.transport == null)
+				throw new ArgumentException();
+
+			while(connection.isConnected)
+			{
+				lock (connection.transport)
+				{
+					Message msg = connection.transport.ReadMessage();
+					if (msg != null)
+					{
+						if (msg.Header.MessageType == MessageType.MethodReturn)
+						{
+							connection.returnMessage = msg;
+							connection.waitForReplyEvent.Set();
+						}
+
+						connection.HandleMessage (msg);
+						connection.DispatchSignals ();
+					}
+				}
+			}
+		}
+
 		//temporary hack
 		public void Iterate ()
 		{
-			mainThread = Thread.CurrentThread;
+			lock (transport)
+			{
+				mainThread = Thread.CurrentThread;
 
-			//Message msg = Inbound.Dequeue ();
-			Message msg = transport.ReadMessage ();
-			//if (msg != null)
-			HandleMessage (msg);
-			DispatchSignals ();
+				//Message msg = Inbound.Dequeue ();
+				Message msg = transport.ReadMessage ();
+				//if (msg != null)
+				HandleMessage (msg);
+				DispatchSignals ();
+			}
 		}
 
 		internal void Dispatch ()
