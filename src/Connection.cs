@@ -42,7 +42,7 @@ namespace NDesk.DBus
 			// From now on all reading is done by a seperate thread.
 			// this allows signals to be received when they arrive and
 			// not synchronised to method calls.
-			signalThread.Start(this);
+			signalThread.Start (this);
 		}
 
 		internal bool isConnected = false;
@@ -67,10 +67,9 @@ namespace NDesk.DBus
 			isConnected = false;
 
 			// Ensure that the reading thread closes down.
-			while (signalThread.IsAlive)
-			{
-				signalThread.Interrupt();
-				signalThread.Abort();
+			while (signalThread.IsAlive) {
+				signalThread.Interrupt ();
+				signalThread.Abort ();
 			}
 		}
 
@@ -159,15 +158,13 @@ namespace NDesk.DBus
 		internal Message SendWithReplyAndBlock (Message msg)
 		{
 			// if a seperate thread is handling receiving messages.
-			if (signalThread.IsAlive)
-			{
+			if (signalThread.IsAlive) {
 					// wait until receving thread calls waitForReplyEvent.
 					SendWithReply (msg);
-					waitForReplyEvent.WaitOne();
+					waitForReplyEvent.WaitOne ();
 					return returnMessage;
 			}
-			else
-			{
+			else {
 				PendingCall pending = SendWithReply (msg);
 				return pending.Reply;
 			}
@@ -264,7 +261,7 @@ namespace NDesk.DBus
 
 		internal Thread mainThread = Thread.CurrentThread;
 
-		internal Thread signalThread = new Thread(new ParameterizedThreadStart(SignalListerThread));
+		internal Thread signalThread = new Thread (new ParameterizedThreadStart (SignalListerThread));
 
 		/// <summary>
 		/// Thread method that reads from a connections while it is connected
@@ -276,27 +273,23 @@ namespace NDesk.DBus
 		private static void SignalListerThread(object connectionObject)
 		{
 			if (connectionObject == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ();
 
 			Connection connection = connectionObject as Connection;
 
 			if (connection == null)
-				throw new ArgumentException();
+				throw new ArgumentException ();
 
 			if (connection.transport == null)
-				throw new ArgumentException();
+				throw new ArgumentException ();
 
-			while(connection.isConnected)
-			{
-				lock (connection.transport)
-				{
-					Message msg = connection.transport.ReadMessage();
-					if (msg != null)
-					{
-						if (msg.Header.MessageType == MessageType.MethodReturn)
-						{
+			while(connection.isConnected) {
+				lock (connection.transport)	{
+					Message msg = connection.transport.ReadMessage ();
+					if (msg != null) {
+						if (msg.Header.MessageType == MessageType.MethodReturn)	{
 							connection.returnMessage = msg;
-							connection.waitForReplyEvent.Set();
+							connection.waitForReplyEvent.Set ();
 						}
 
 						connection.HandleMessage (msg);
