@@ -163,8 +163,7 @@ namespace NDesk.DBus
 				SendWithReply (msg);
 				waitForReplyEvent.WaitOne ();
 				return returnMessage;
-			}
-			else {
+			} else {
 				PendingCall pending = SendWithReply (msg);
 				return pending.Reply;
 			}
