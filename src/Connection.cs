@@ -284,7 +284,7 @@ namespace NDesk.DBus
 
 			while(connection.isConnected) {
 				lock (connection.transport)	{
-					Message msg = connection.transport.ReadMessage ();receiving
+					Message msg = connection.transport.ReadMessage ();
 					if (msg != null) {
 						if (msg.Header.MessageType == MessageType.MethodReturn)	{
 							connection.returnMessage = msg;
