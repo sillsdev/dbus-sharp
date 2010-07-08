@@ -42,13 +42,13 @@ namespace NDesk.DBus
 		}
 		*/
 
-		Dictionary<Type,Type> map = new Dictionary<Type,Type> ();
+		static Dictionary<String,Type> map = new Dictionary<String,Type> ();
 
 		public Type GetImplementation (Type declType)
 		{
 			Type retT;
 
-			if (map.TryGetValue (declType, out retT))
+			if (map.TryGetValue (declType.ToString(), out retT))
 				return retT;
 
 			string proxyName = declType.Name + "Proxy";
@@ -123,7 +123,7 @@ namespace NDesk.DBus
 				Implement (typeB, iface);
 
 			retT = typeB.CreateType ();
-			map[declType] = retT;
+			map[declType.ToString()] = retT;
 
 			return retT;
 		}
