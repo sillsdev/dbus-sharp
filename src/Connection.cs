@@ -159,7 +159,7 @@ namespace NDesk.DBus
 		{
 			// if a seperate thread is handling receiving messages.
 			if (signalThread.IsAlive) {
-				// wait until receving thread calls waitForReplyEvent.
+				// wait until receiving thread calls waitForReplyEvent.
 				SendWithReply (msg);
 				waitForReplyEvent.WaitOne ();
 				return returnMessage;
@@ -284,10 +284,15 @@ namespace NDesk.DBus
 
 			while(connection.isConnected) {
 				lock (connection.transport)	{
-					Message msg = connection.transport.ReadMessage ();
+					Message msg = connection.transport.ReadMessage ();receiving
 					if (msg != null) {
 						if (msg.Header.MessageType == MessageType.MethodReturn)	{
 							connection.returnMessage = msg;
+							connection.waitForReplyEvent.Set ();
+						}
+						else if (msg.Header.MessageType == MessageType.Error || msg.Header.MessageType == MessageType.Invalid) {
+							// Don't continue waiting for reply if we get an error
+							connection.returnMessage = null;
 							connection.waitForReplyEvent.Set ();
 						}
 
