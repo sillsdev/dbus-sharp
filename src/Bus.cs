@@ -92,8 +92,12 @@ namespace NDesk.DBus
 		static readonly string DBusName = "org.freedesktop.DBus";
 		static readonly ObjectPath DBusPath = new ObjectPath ("/org/freedesktop/DBus");
 
-		public Bus (string address) : base (address)
+		private string address;
+
+		public Bus(string address) : base(address)
 		{
+			this.address = address;
+
 			bus = GetObject<IBus> (DBusName, DBusPath);
 
 			/*
@@ -102,6 +106,12 @@ namespace NDesk.DBus
 		};
 		*/
 			Register ();
+		}
+
+		public override void Close()
+		{
+			base.Close();
+			buses.Remove(address);
 		}
 
 		//should this be public?
