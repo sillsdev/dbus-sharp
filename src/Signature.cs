@@ -778,6 +778,12 @@ namespace NDesk.DBus
 						//return typeof (IDictionary<,>).MakeGenericType (new Type[] {keyType, valueType});
 						//workaround for Mono bug #81035 (memory leak)
 						return Mapper.GetGenericType (typeof (IDictionary<,>), new Type[] {keyType, valueType});
+					} else if ((DType)data[pos] == DType.StructBegin) {
+						while((DType)data[pos] != DType.StructEnd)
+							pos++;
+						//skip over the )
+						pos++;
+						return typeof(object);
 					} else {
 						return ToType (ref pos).MakeArrayType ();
 					}
