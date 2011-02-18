@@ -282,24 +282,32 @@ namespace NDesk.DBus
 			if (connection.transport == null)
 				throw new ArgumentException ();
 
-			while(connection.isConnected) {
-				lock (connection.transport)	{
-					Message msg = connection.transport.ReadMessage ();
-					if (msg != null) {
-						if (msg.Header.MessageType == MessageType.MethodReturn)	{
-							connection.returnMessage = msg;
-							connection.waitForReplyEvent.Set ();
-						}
-						else if (msg.Header.MessageType == MessageType.Error || msg.Header.MessageType == MessageType.Invalid) {
-							// Don't continue waiting for reply if we get an error
-							connection.returnMessage = null;
-							connection.waitForReplyEvent.Set ();
-						}
+			try
+			{
+				while(connection.isConnected) {
+					lock (connection.transport)	{
+						Message msg = connection.transport.ReadMessage ();
+						if (msg != null) {
+							if (msg.Header.MessageType == MessageType.MethodReturn)	{
+								connection.returnMessage = msg;
+								connection.waitForReplyEvent.Set ();
+							}
+							else if (msg.Header.MessageType == MessageType.Error || msg.Header.MessageType == MessageType.Invalid) {
+								// Don't continue waiting for reply if we get an error
+								connection.returnMessage = null;
+								connection.waitForReplyEvent.Set ();
+							}
 
-						connection.HandleMessage (msg);
-						connection.DispatchSignals ();
+							connection.HandleMessage (msg);
+							connection.DispatchSignals ();
+						}
 					}
 				}
+			}
+			catch(Exception e)
+			{
+				connection.returnMessage = null;
+				connection.waitForReplyEvent.Set ();
 			}
 		}
 
