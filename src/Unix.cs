@@ -5,6 +5,20 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using NDesk.DBus;
+
+namespace NDesk.DBus
+{
+	/// <summary>
+	/// Error with Dbus Connection.
+	/// </summary>
+	public class DBusConectionErrorException : ApplicationException
+	{
+		public DBusConectionErrorException(string message) : base(message)
+		{
+		}
+	}
+}
 
 namespace NDesk.Unix
 {
@@ -154,10 +168,10 @@ namespace NDesk.Unix
 			}
 		}
 
-		public static Exception GetLastUnixException ()
+		internal static Exception GetLastUnixException ()
 		{
 			int errno = System.Runtime.InteropServices.Marshal.GetLastWin32Error ();
-			return new Exception (String.Format ("Error {0}: {1}", errno, GetErrorString (errno)));
+			return new DBusConectionErrorException (String.Format ("Error {0}: {1}", errno, GetErrorString (errno)));
 		}
 	}
 
