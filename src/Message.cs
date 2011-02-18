@@ -171,7 +171,7 @@ namespace NDesk.DBus
 		{
 			Signature typeSig = Signature.GetSig (conversionType);
 			if (typeSig != signature)
-				throw new InvalidCastException ();
+				throw new InvalidCastException (String.Format("{0} doesn't match {1}", typeSig.ToString(), signature.ToString()));
 
 			MessageReader reader = new MessageReader (endianness, data);
 			return reader.ReadValue (conversionType);
