@@ -294,7 +294,7 @@ namespace NDesk.DBus
 							}
 							else if (msg.Header.MessageType == MessageType.Error || msg.Header.MessageType == MessageType.Invalid) {
 								// Don't continue waiting for reply if we get an error
-								connection.returnMessage = null;
+								connection.returnMessage = msg;
 								connection.waitForReplyEvent.Set ();
 							}
 
