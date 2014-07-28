@@ -8,6 +8,7 @@ using System.IO;
 using System.Collections.Generic;
 using NDesk.DBus;
 using org.freedesktop.DBus;
+using System.Linq;
 
 class BusMonitor
 {
@@ -166,7 +167,7 @@ class BusMonitor
 		//foreach (HeaderField hf in msg.HeaderFields)
 		//	Console.WriteLine (indent + hf.Code + ": " + hf.Value);
 		Console.WriteLine (indent + "Header Fields:");
-		foreach (KeyValuePair<FieldCode,object> field in msg.Header.Fields)
+		foreach (KeyValuePair<FieldCode,object> field in msg.Header.Fields.ToDictionary(i => (FieldCode)i.Key, i => i.Value))
 			Console.WriteLine (indent + indent + field.Key + ": " + field.Value);
 
 		Console.WriteLine (indent + "Body (" + msg.Header.Length + " bytes):");
