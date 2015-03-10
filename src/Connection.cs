@@ -67,9 +67,12 @@ namespace NDesk.DBus
 			isConnected = false;
 
 			// Ensure that the reading thread closes down.
+			int hangPrevention = 0;
 			while (signalThread.IsAlive) {
 				signalThread.Interrupt ();
 				signalThread.Abort ();
+				if (++hangPrevention > 10)
+					break;
 			}
 		}
 
