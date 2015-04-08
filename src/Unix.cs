@@ -115,6 +115,12 @@ namespace NDesk.Unix
 		{
 			usock.Write (&value, 1);
 		}
+
+		public override void Close()
+		{
+			usock.Close();
+			base.Close();
+		}
 	}
 
 	static class UnixUid
@@ -317,6 +323,9 @@ namespace NDesk.Unix
 		public void Close ()
 		{
 			int r = 0;
+
+			if (Handle == -1 && connected == false)
+				return;
 
 			do {
 				r = close (Handle);

@@ -80,7 +80,8 @@ namespace NDesk.DBus.Transports
 
 		public virtual void Disconnect ()
 		{
-			ns.Dispose ();
+			ns.Close();
+			ns.Dispose();
 		}
 
 		internal Queue<Message> Inbound = new Queue<Message> ();
@@ -136,7 +137,21 @@ namespace NDesk.DBus.Transports
 					continue;
 				}
 				*/
-				int nread = ns.Read (buffer, offset + read, count - read);
+
+
+				int nread = 0;
+
+				if (!connection.IsConnected)
+					break;
+
+				try
+				{
+					nread = ns.Read(buffer, offset + read, count - read);
+				}catch(Exception e)
+				{
+					if (!connection.IsConnected)
+						break;
+				}
 				if (nread == 0)
 					break;
 				read += nread;

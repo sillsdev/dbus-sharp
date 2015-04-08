@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace NDesk.DBus
 {
@@ -15,6 +16,11 @@ namespace NDesk.DBus
 
 	public partial class Connection
 	{
+		[DllImport("libpthread.so.0")] private static extern long pthread_self();
+		[DllImport("libpthread.so.0")] private static extern int pthread_kill(long thread, int sig);
+
+		long _pthreadId;
+
 		Transport transport;
 		internal Transport Transport {
 			get {
@@ -42,6 +48,7 @@ namespace NDesk.DBus
 			// From now on all reading is done by a seperate thread.
 			// this allows signals to be received when they arrive and
 			// not synchronised to method calls.
+			signalThread.IsBackground = true;
 			signalThread.Start (this);
 		}
 
@@ -65,15 +72,10 @@ namespace NDesk.DBus
 
 			transport.Disconnect ();
 			isConnected = false;
-
-			// Ensure that the reading thread closes down.
-			int hangPrevention = 0;
-			while (signalThread.IsAlive) {
-				signalThread.Interrupt ();
-				signalThread.Abort ();
-				if (++hangPrevention > 10)
-					break;
-			}
+			signalThread.Interrupt ();
+			if (_pthreadId != 0)
+				pthread_kill(_pthreadId, /*SIGUSRG */23);
+			signalThread = null;
 		}
 
 		//should we do connection sharing here?
@@ -160,9 +162,15 @@ namespace NDesk.DBus
 
 		internal Message SendWithReplyAndBlock (Message msg)
 		{
+			if (signalThread == null)
+				return null;
+
 			// if a seperate thread is handling receiving messages.
 			if (signalThread.IsAlive) {
 				// wait until receiving thread calls waitForReplyEvent.
+				if (!this.isConnected)
+					return null;
+
 				SendWithReply (msg);
 				waitForReplyEvent.WaitOne ();
 				return returnMessage;
@@ -285,6 +293,8 @@ namespace NDesk.DBus
 			if (connection.transport == null)
 				throw new ArgumentException ();
 
+			connection._pthreadId = pthread_self();
+
 			try
 			{
 				while(connection.isConnected) {
@@ -312,6 +322,11 @@ namespace NDesk.DBus
 				connection.returnMessage = null;
 				connection.waitForReplyEvent.Set ();
 			}
+			finally
+			{
+				connection._pthreadId = 0;
+			}
+
 		}
 
 		//temporary hack
