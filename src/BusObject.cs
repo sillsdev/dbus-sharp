@@ -11,9 +11,9 @@ namespace NDesk.DBus
 {
 	class BusObject
 	{
-		protected Connection conn;
-		string bus_name;
-		ObjectPath object_path;
+		internal protected Connection conn;
+		internal string bus_name;
+		internal ObjectPath object_path;
 
 		//protected BusObject ()
 		public BusObject ()

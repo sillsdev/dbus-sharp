@@ -1117,13 +1117,18 @@ namespace NDesk.DBus
 					}
 
 					// Read and store an element to the array
-					ilg.Emit (OpCodes.Ldloc, collLocal);
-
+					var lbList = new List<LocalBuilder>();
 					foreach (Type genArg in genArgs) {
 						ilg.Emit (OpCodes.Ldloc, readerLocal);
+						var lb = ilg.DeclareLocal(genArg);
+						lbList.Add(lb);
 						GenReader (ilg, genArg);
+						ilg.Emit(OpCodes.Stloc, lb);
 					}
 
+					ilg.Emit (OpCodes.Ldloc, collLocal);
+					foreach (var l in lbList)
+						ilg.Emit(OpCodes.Ldloc, l);
 					ilg.Emit (OpCodes.Call, addMethod);
 				}
 

@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <RootNamespace>NDesk.DBus</RootNamespace>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\ndesk.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -70,6 +70,7 @@
     <Compile Include="UnixNativeTransport.cs" />
     <Compile Include="UnixTransport.cs" />
     <Compile Include="Wrapper.cs" />
+    <Compile Include="StandardInterfaces\ObjectManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NDesk.DBus.dll.config" />
@@ -78,4 +79,7 @@
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="StandardInterfaces\" />
+  </ItemGroup>
 </Project>

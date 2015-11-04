@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace NDesk.DBus.Transports
 {
-	abstract class Transport
+	internal abstract class Transport
 	{
 		public static Transport Create (AddressEntry entry)
 		{
@@ -106,7 +106,7 @@ namespace NDesk.DBus.Transports
 			GetData ();
 		}
 
-		internal Message ReadMessage ()
+		virtual internal Message ReadMessage ()
 		{
 			// Hack to complete pending async reads in progress.
 			while (msgRdr != null)
@@ -123,7 +123,7 @@ namespace NDesk.DBus.Transports
 			}
 		}
 
-		int Read (byte[] buffer, int offset, int count)
+		protected virtual int Read (byte[] buffer, int offset, int count)
 		{
 			int read = 0;
 			//System.Net.Sockets.NetworkStream nns = ns as System.Net.Sockets.NetworkStream;

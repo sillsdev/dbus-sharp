@@ -12,7 +12,7 @@ using System.Reflection;
 namespace NDesk.DBus
 {
 	//maybe this should be nullable?
-	struct Signature
+	internal struct Signature
 	{
 		//TODO: this class needs some work
 		//Data should probably include the null terminator
@@ -779,16 +779,29 @@ namespace NDesk.DBus
 						//workaround for Mono bug #81035 (memory leak)
 						return Mapper.GetGenericType (typeof (IDictionary<,>), new Type[] {keyType, valueType});
 					} else if ((DType)data[pos] == DType.StructBegin) {
-						while((DType)data[pos] != DType.StructEnd)
+						//skip over the (
+						pos++;
+						while ((DType)data[pos] != DType.StructEnd)
+						{
+							Type unusedType = ToType(ref pos);
 							pos++;
+						}
 						//skip over the )
 						pos++;
-						return typeof(object);
+						return typeof (object[]);
 					} else {
 						return ToType (ref pos).MakeArrayType ();
 					}
 				case DType.Struct:
 					return typeof (ValueType);
+				case DType.StructBegin:
+					while ((DType)data[pos] != DType.StructEnd)
+					{
+						Type unusedType = ToType(ref pos);
+					}
+					//skip over the )
+					pos++;
+					return typeof (object);
 				case DType.DictEntry:
 					return typeof (System.Collections.Generic.KeyValuePair<,>);
 				case DType.Variant:
@@ -870,7 +883,7 @@ namespace NDesk.DBus
 		Out,
 	}
 
-	enum DType : byte
+	public enum DType : byte
 	{
 		Invalid = (byte)'\0',
 
