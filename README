@@ -35,3 +35,9 @@ a consideration.
 
 --
 Alp Toker <alp@atoker.com>
+
+
+Building
+========
+
+xbuild NDesk.DBus.sln

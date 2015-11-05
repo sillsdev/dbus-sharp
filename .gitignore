@@ -1,7 +1,0 @@
-*.exe
-*.dll
-*.mdb
-*.suo
-*.user
-bin/
-obj/
