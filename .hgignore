@@ -1,0 +1,7 @@
+syntax: glob
+NDesk.DBusTests/bin/Debug/
+NDesk.DBusTests/obj/Debug/
+src/bin/
+src/obj
+tools/bin/
+tools/obj
