@@ -7,8 +7,8 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyFileVersion("0.7.0")]
-[assembly: AssemblyInformationalVersion("0.7.0")]
+[assembly: AssemblyFileVersion("0.12.0")]
+[assembly: AssemblyInformationalVersion("0.12.0")]
 [assembly: AssemblyVersion("1.0")]
 [assembly: AssemblyTitle ("NDesk.DBus")]
 [assembly: AssemblyDescription ("D-Bus IPC protocol library and CLR binding")]
