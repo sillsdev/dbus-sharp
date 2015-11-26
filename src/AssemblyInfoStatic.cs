@@ -2,8 +2,6 @@
 // This software is made available under the MIT License
 // See COPYING for details
 
-// This AssemblyInfo file is used in builds that aren't driven by autoconf, eg. Visual Studio
-
 using System.Reflection;
 using System.Runtime.CompilerServices;
 

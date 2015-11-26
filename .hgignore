@@ -6,6 +6,7 @@ src/obj
 tools/bin/
 tools/obj
 packages/
+NuGetBuild/
 *~
 *.userprefs
 build/NuGet.exe

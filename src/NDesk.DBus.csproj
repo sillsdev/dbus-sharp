@@ -71,15 +71,32 @@
     <Compile Include="UnixTransport.cs" />
     <Compile Include="Wrapper.cs" />
     <Compile Include="StandardInterfaces\ObjectManager.cs" />
+    <None Include="packages.config" />
+    <None Include="NuGetAssets\dbus-sharp.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NDesk.DBus.dll.config" />
+    <None Include="NDesk.DBus.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets')" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
   <ItemGroup>
     <Folder Include="StandardInterfaces\" />
+    <Folder Include="NuGetAssets\" />
   </ItemGroup>
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <FilesToDelete Include="$(SolutionDir)NuGetBuild\**\*.*" />
+      <SourceFiles Include="$(TargetDir)\*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+    <MakeDir Directories="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets\dbus-sharp.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(SolutionDir)NuGetBuild" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" />
+  </Target>
 </Project>
