@@ -1,0 +1,89 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<RootDir Condition="'$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
+	</PropertyGroup>
+
+	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<UsingTask TaskName="NUnitTeamCity"
+		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
+		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="NUnitTeamCity"
+		AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"
+		Condition=" '$(teamcity_version)' != '' And '$(OS)'!='Windows_NT'"/>
+
+	<Import Project="NuGet.targets"/>
+
+	<PropertyGroup>
+		<Solution>NDesk.DBus.sln</Solution>
+		<SolutionDir>$(RootDir)</SolutionDir>
+		<SolutionPath>$(SolutionDir)/$(Solution)</SolutionPath>
+		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
+		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
+		<OutputTestDir>$(RootDir)/NDesk.DBusTests/bin/$(Configuration)</OutputTestDir>
+	</PropertyGroup>
+
+	<Target Name="Build">
+		<CallTarget Targets="Clean"/>
+		<CallTarget Targets="Compile"/>
+		<Message Text="Build Complete"/>
+	</Target>
+
+	<ItemGroup>
+		<ExistingObjectFiles
+			Include="$(RootDir)/src/bin/$(Configuration)/**/*"
+			Exclude="$(RootDir)/.hg/**/*"
+		/>
+	</ItemGroup>
+
+	<Target Name="Clean">
+		<Delete Files="@(ExistingObjectFiles)" />
+		<Delete Condition="'$(OS)'=='Windows_NT'"
+			 Files="$(RootDir)/**/obj/**/*" />
+		<Delete Condition="'$(OS)'=='Windows_NT'"
+			 Files="$(RootDir)/**/bin/**/*" />
+		<Exec Condition="'$(OS)'!='Windows_NT'"
+			Command="find . %5c( -name obj -o -name bin -o -name test-results %5c) -type d -print0 | xargs -0 rm -rf"
+			WorkingDirectory="$(RootDir)" />
+	</Target>
+
+	<Target Name="Compile" DependsOnTargets="RestorePackages">
+		<MSBuild
+			Projects="$(SolutionPath)"
+			Targets="Build"
+			Properties="Configuration=$(Configuration)" />
+	</Target>
+
+	<Target Name="Test" DependsOnTargets="Build">
+		<CallTarget Targets="TestOnly"/>
+	</Target>
+
+	<Target Name="TestOnly" DependsOnTargets="RunNUnitTC;RunNUnit"/>
+
+	<Target Name="RunNUnitTC" Condition="'$(teamcity_version)' != ''">
+		<ItemGroup>
+			<TestAssemblies Include="$(OutputTestDir)/*Tests.dll"/>
+		</ItemGroup>
+
+		<NUnitTeamCity
+			Assemblies="@(TestAssemblies)"
+			ExcludeCategory="SkipOnTeamCity;ByHand$(ExtraExcludeCategories)"
+			NUnitVersion="NUnit-2.6.3" />
+	</Target>
+
+	<Target Name="RunNUnit" Condition="'$(teamcity_version)' == ''">
+		<ItemGroup>
+			<TestAssemblies Include="$(OutputTestDir)/*Tests.dll"/>
+		</ItemGroup>
+
+		<NUnit Assemblies="@(TestAssemblies)"
+			ToolPath="$(SolutionDir)/packages/NUnit.Runners.2.6.4/tools"
+			TestInNewThread="false"
+			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
+			WorkingDirectory="$(OutputTestDir)"
+			Force32Bit="$(useNUnit-x86)"
+			Verbose="true"
+			OutputXmlFile="$(OutputTestDir)/TestResults.xml"/>
+	</Target>
+
+</Project>

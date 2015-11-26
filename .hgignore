@@ -1,7 +1,11 @@
 syntax: glob
-NDesk.DBusTests/bin/Debug/
-NDesk.DBusTests/obj/Debug/
+NDesk.DBusTests/bin/
+NDesk.DBusTests/obj/
 src/bin/
 src/obj
 tools/bin/
 tools/obj
+packages/
+*~
+*.userprefs
+build/NuGet.exe

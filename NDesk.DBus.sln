@@ -1,5 +1,5 @@
 
-Microsoft Visual Studio Solution File, Format Version 10.00
+Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDesk.DBus", "src\NDesk.DBus.csproj", "{09A0200F-F3AF-4BD6-9EC4-E7D80D273E4C}"
 EndProject
@@ -8,6 +8,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dbus-daemon", "src\dbus-daemon.csproj", "{41918B94-6DAD-4C05-9FDF-17D51EC85AF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDesk.DBusTests", "NDesk.DBusTests\NDesk.DBusTests.csproj", "{50E85243-FCA2-450E-BD0B-A63C51E2D8C2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BA85940C-EAB7-4118-82DC-1B4C1F8C04B3}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +37,7 @@ Global
 		{736160C3-844E-43D9-8106-E492D74D92CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{736160C3-844E-43D9-8106-E492D74D92CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = src\NDesk.DBus.csproj
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
