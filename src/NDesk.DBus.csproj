@@ -73,6 +73,7 @@
     <Compile Include="StandardInterfaces\ObjectManager.cs" />
     <None Include="packages.config" />
     <None Include="NuGetAssets\NDesk.DBus.nuspec" />
+    <None Include="NuGetAssets\NDesk.DBus.targets" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NDesk.DBus.dll.config">
@@ -96,7 +97,8 @@
     <Delete Files="@(FilesToDelete)" />
     <MakeDir Directories="$(SolutionDir)NuGetBuild" />
     <Copy SourceFiles="$(ProjectDir)NuGetAssets\NDesk.DBus.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets\NDesk.DBus.targets" DestinationFolder="$(SolutionDir)NuGetBuild/build" />
+    <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" />
   </Target>
 </Project>
