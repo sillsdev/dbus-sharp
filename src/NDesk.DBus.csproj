@@ -72,7 +72,7 @@
     <Compile Include="Wrapper.cs" />
     <Compile Include="StandardInterfaces\ObjectManager.cs" />
     <None Include="packages.config" />
-    <None Include="NuGetAssets\dbus-sharp.nuspec" />
+    <None Include="NuGetAssets\NDesk.DBus.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NDesk.DBus.dll.config">
@@ -91,11 +91,11 @@
   <Target Name="AfterBuild">
     <ItemGroup>
       <FilesToDelete Include="$(SolutionDir)NuGetBuild\**\*.*" />
-      <SourceFiles Include="$(TargetDir)\*.*" />
+      <SourceFiles Include="$(TargetDir)\NDesk.DBus*.*" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
     <MakeDir Directories="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="$(ProjectDir)NuGetAssets\dbus-sharp.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets\NDesk.DBus.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
     <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(SolutionDir)NuGetBuild" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" />
   </Target>

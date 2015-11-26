@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <package  xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-	<id>dbus-sharp</id>
+	<id>NDesk.DBus</id>
+	<title>dbus-sharp</title>
 	<version>$version$</version>
 	<authors>Alp Toker, Tom Hindle</authors>
 	<owners>Tom Hindle, Eberhard Beilharz</owners>
