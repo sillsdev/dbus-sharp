@@ -8,13 +8,14 @@ using System.IO;
 using System.Threading;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Xml.Serialization;
+using NDesk.DBus.Authentication;
+using NDesk.DBus.Introspection;
+using NDesk.DBus.Transports;
 
 namespace NDesk.DBus
 {
-	using Authentication;
-	using Transports;
-
-	public partial class Connection
+	public class Connection
 	{
 		[DllImport("libpthread.so.0")] private static extern long pthread_self();
 		[DllImport("libpthread.so.0")] private static extern int pthread_kill(long thread, int sig);
@@ -50,6 +51,28 @@ namespace NDesk.DBus
 			// not synchronised to method calls.
 			signalThread.IsBackground = true;
 			signalThread.Start (this);
+		}
+
+		//FIXME: debug hack
+		~Connection ()
+		{
+			if (Protocol.Verbose)
+				TypeDefiner.Save ();
+		}
+
+		//dynamically defines a Type for the proxy object using D-Bus introspection
+		public object GetObject (string bus_name, ObjectPath path)
+		{
+			org.freedesktop.DBus.Introspectable intros = GetObject<org.freedesktop.DBus.Introspectable> (bus_name, path);
+			string data = intros.Introspect ();
+
+			StringReader sr = new StringReader (data);
+			XmlSerializer sz = new XmlSerializer (typeof (Node));
+			Node node = (Node)sz.Deserialize (sr);
+
+			Type type = TypeDefiner.Define (node.Interfaces);
+
+			return GetObject (type, bus_name, path);
 		}
 
 		internal bool isConnected = false;
