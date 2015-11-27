@@ -567,6 +567,11 @@ namespace NDesk.DBus
 			return Unregister (path);
 		}
 
+		/// <summary>
+		/// This seems to be for Register objects on a DBus server.
+		/// </summary>
+		/// <param name="path">Path.</param>
+		/// <param name="obj">Object.</param>
 		public void Register (ObjectPath path, object obj)
 		{
 			ExportObject eo = ExportObject.CreateExportObject (this, path, obj);

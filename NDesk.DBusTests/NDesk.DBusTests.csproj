@@ -44,6 +44,9 @@
     <Compile Include="FakeTransport.cs" />
     <Compile Include="TypeImplementerTests.cs" />
     <Compile Include="TestByteArrays.cs" />
+    <Compile Include="IntergrationTests\SystemBusTests.cs" />
+    <Compile Include="ConnectionTests.cs" />
+    <Compile Include="IntergrationTests\SessionBusTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -58,5 +61,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IntergrationTests\" />
   </ItemGroup>
 </Project>

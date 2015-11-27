@@ -10,3 +10,5 @@ NuGetBuild/
 *~
 *.userprefs
 build/NuGet.exe
+NDesk.DBusTests/test-results/
+test-results/
