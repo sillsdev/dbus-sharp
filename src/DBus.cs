@@ -59,6 +59,8 @@ namespace org.freedesktop.DBus
 		string Introspect ();
 	}
 
+	public delegate void PropertiesChangedHandler(string s,Dictionary<string, object> d,string[] a);
+
 	[Interface ("org.freedesktop.DBus.Properties")]
 	public interface Properties
 	{
@@ -67,6 +69,7 @@ namespace org.freedesktop.DBus
 		void Set (string @interface, string propname, object value);
 		[return: Argument ("props")]
 		IDictionary<string,object> GetAll (string @interface);
+		event PropertiesChangedHandler PropertiesChangedEvent;
 	}
 
 	[Interface ("org.freedesktop.DBus")]
