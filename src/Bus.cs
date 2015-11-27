@@ -110,6 +110,13 @@ namespace NDesk.DBus
 
 		public override void Close()
 		{
+			if (this == sessionBus)
+				sessionBus = null;
+			else if (this == systemBus)
+				systemBus = null;
+			else if (this == starterBus)
+				starterBus = null;
+
 			base.Close();
 			buses.Remove(address);
 		}
