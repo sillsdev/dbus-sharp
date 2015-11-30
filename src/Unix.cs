@@ -227,10 +227,6 @@ namespace NDesk.Unix
 	{
 		internal const string LIBC = "libc";
 
-		// Solaris provides socket functionality in libsocket rather than libc.
-		// We use a dllmap in the .config to deal with this.
-		internal const string LIBSOCKET = "libsocket";
-
 		public const short AF_UNIX = 1;
 		// FIXME: SOCK_STREAM is 2 on Solaris
 		public const short SOCK_STREAM = 1;
@@ -247,31 +243,30 @@ namespace NDesk.Unix
 		[DllImport (LIBC, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
 		internal static extern IntPtr setsid ();
 
-
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		internal static extern int close (int fd);
 
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		protected static extern int socket (int domain, int type, int protocol);
 
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		protected static extern int connect (int sockfd, byte[] serv_addr, uint addrlen);
 
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		protected static extern int bind (int sockfd, byte[] my_addr, uint addrlen);
 
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		protected static extern int listen (int sockfd, int backlog);
 
 		//TODO: this prototype is probably wrong, fix it
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		protected static extern int accept (int sockfd, void* addr, ref uint addrlen);
 
 		//TODO: confirm and make use of these functions
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		protected static extern int getsockopt (int s, int optname, IntPtr optval, ref uint optlen);
 
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		protected static extern int setsockopt (int s, int optname, IntPtr optval, uint optlen);
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
@@ -361,10 +356,10 @@ namespace NDesk.Unix
 		//[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		//static extern int vmsplice (int fd, IOVector* iov, uint nr_segs, uint flags);
 
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern SSizeT recvmsg (int s, void* msg, int flags);
 
-		[DllImport (LIBSOCKET, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern SSizeT sendmsg (int s, void* msg, int flags);
 
 		public int Handle;
