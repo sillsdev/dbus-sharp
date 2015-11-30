@@ -20,6 +20,8 @@ namespace NDesk.DBusTests.IntergrationTests
 			test.RequestName(TestName, NameFlag.DoNotQueue);
 
 			Assert.AreEqual(nameAcquiredResult, TestName);
+
+			Bus.Session.Close();
 		}
 	}
 }

@@ -109,6 +109,8 @@ namespace NDesk.DBusTests.IntergrationTests
 
 			var dbus = Bus.System.GetObject<Introspectable>("org.freedesktop.DBus", new ObjectPath("/var/run/dbus/system_bus_socket"));
 			Assert.AreEqual(expectedResult, dbus.Introspect());
+
+			Bus.System.Close();
 		}
 	}
 }

@@ -80,7 +80,6 @@ namespace NDesk.DBus.Transports
 
 		public virtual void Disconnect ()
 		{
-			ns.Close();
 			ns.Dispose();
 		}
 

@@ -31,16 +31,17 @@ namespace NDesk.Unix
 
 	sealed class UnixStream : Stream //, IDisposable
 	{
-		public readonly UnixSocket usock;
+		readonly UnixSocket _usock;
+		bool _shutdown = false;
 
 		public UnixStream (int fd)
 		{
-			this.usock = new UnixSocket (fd);
+			this._usock = new UnixSocket (fd);
 		}
 
 		public UnixStream (UnixSocket usock)
 		{
-			this.usock = usock;
+			this._usock = usock;
 		}
 
 		public override bool CanRead
@@ -96,29 +97,40 @@ namespace NDesk.Unix
 
 		public override int Read ([In, Out] byte[] buffer, int offset, int count)
 		{
-			return usock.Read (buffer, offset, count);
+			return _usock.Read (buffer, offset, count);
 		}
 
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			usock.Write (buffer, offset, count);
+			_usock.Write (buffer, offset, count);
 		}
 
 		unsafe public override int ReadByte ()
 		{
 			byte value;
-			usock.Read (&value, 1);
+			_usock.Read (&value, 1);
 			return value;
 		}
 
 		unsafe public override void WriteByte (byte value)
 		{
-			usock.Write (&value, 1);
+			_usock.Write (&value, 1);
 		}
 
+		/// <summary>
+		/// First time Close is called - will do a shutdown.
+		/// The second time its called the socket will be closed.
+		/// </summary>
 		public override void Close()
 		{
-			usock.Close();
+			if (!_shutdown)
+			{
+				_usock.Shutdown();
+				_shutdown = true;
+			}
+			else
+				_usock.Close();
+
 			base.Close();
 		}
 	}
@@ -265,6 +277,77 @@ namespace NDesk.Unix
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		unsafe static extern SSizeT read (int fd, byte* buf, SizeT count);
 
+		[Flags]
+		enum PollEvents : short
+		{
+			/// <summary>
+			/// There is data to read.
+			/// </summary>
+			POLLIN = 0x001,
+			/// <summary>
+			/// urgent - out-of-band data
+			/// </summary>
+			POLLPRI = 0x002,
+			/// <summary>
+			/// Writing now will not block
+			/// </summary>
+			POLLOUT = 0x004,
+			/// <summary>
+			/// Equivalent to POLLIN
+			/// </summary>
+			EPOLLRDNORM = 0x040,
+			/// <summary>
+			/// Priority band data can be read.
+			/// </summary>
+			EPOLLRDBAND = 0x080,
+			/// <summary>
+			/// Equivalent to POLLOUT
+			/// </summary>
+			EPOLLWRNORM = 0x100,
+			/// <summary>
+			/// Priority band data may be written.
+			/// </summary>
+			EPOLLWRBAND = 0x200,
+			/// <summary>
+			/// Not used on Linux.
+			/// </summary>
+			EPOLLMSG = 0x400,
+			/// <summary>
+			/// Error condition.
+			/// </summary>
+			EPOLLERR = 0x008,
+			/// <summary>
+			/// Hang up (output only)
+			/// </summary>
+			EPOLLHUP = 0x010,
+			/// <summary>
+			/// Stream socket peer closed connection, or shut down writing half of connection.
+			/// </summary>
+			EPOLLRDHUP = 0x2000,
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		struct PollFD
+		{
+			public int fd;
+			public PollEvents events;
+			public PollEvents revents;
+		}
+
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		static extern int poll([MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)] PollFD[] pollfd, int nfds, int timeout);
+
+		[Flags]
+		enum ShutdownOptions
+		{
+			SHUT_RD = 0,
+			SHUT_WR = 1,
+			SHUT_RDWR = 2,
+		}
+
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
+		static extern int shutdown(int socket, ShutdownOptions how);
+
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		unsafe static extern SSizeT write (int fd, byte* buf, SizeT count);
 
@@ -318,6 +401,19 @@ namespace NDesk.Unix
 		}
 
 		protected bool connected = false;
+
+		public void Shutdown()
+		{
+			int r = 0;
+
+			if (Handle == -1 && connected == false)
+				return;
+
+			r = shutdown(Handle, ShutdownOptions.SHUT_RDWR);
+
+			if (r < 0)
+				throw UnixError.GetLastUnixException ();
+		}
 
 		//TODO: consider memory management
 		public void Close ()
@@ -405,7 +501,16 @@ namespace NDesk.Unix
 		{
 			int r = 0;
 
-			do {
+			var fdarray = new PollFD[1];
+			fdarray[0].fd = Handle;
+			fdarray[0].events = PollEvents.POLLIN | PollEvents.EPOLLRDHUP | PollEvents.EPOLLHUP | PollEvents.EPOLLERR;
+
+			do
+			{
+				if (poll(fdarray, 1, -1) == -1)
+					break;
+				if ((fdarray[0].revents & PollEvents.POLLIN) == 0)
+					break;
 				r = (int)read (Handle, bufP, (SizeT)count);
 			} while (r < 0 && UnixError.ShouldRetry);
 

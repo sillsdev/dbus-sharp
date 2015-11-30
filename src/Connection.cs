@@ -16,11 +16,6 @@ namespace NDesk.DBus
 
 	public partial class Connection
 	{
-		[DllImport("libpthread.so.0")] private static extern long pthread_self();
-		[DllImport("libpthread.so.0")] private static extern int pthread_kill(long thread, int sig);
-
-		long _pthreadId;
-
 		Transport transport;
 		internal Transport Transport {
 			get {
@@ -72,9 +67,7 @@ namespace NDesk.DBus
 
 			transport.Disconnect ();
 			isConnected = false;
-			signalThread.Interrupt ();
-			if (_pthreadId != 0)
-				pthread_kill(_pthreadId, /*SIGUSRG */23);
+			signalThread.Join();
 			signalThread = null;
 		}
 
@@ -293,8 +286,6 @@ namespace NDesk.DBus
 			if (connection.transport == null)
 				throw new ArgumentException ();
 
-			connection._pthreadId = pthread_self();
-
 			try
 			{
 				while(connection.isConnected) {
@@ -316,17 +307,13 @@ namespace NDesk.DBus
 						}
 					}
 				}
+				connection.Close();
 			}
 			catch(Exception e)
 			{
 				connection.returnMessage = null;
 				connection.waitForReplyEvent.Set ();
 			}
-			finally
-			{
-				connection._pthreadId = 0;
-			}
-
 		}
 
 		//temporary hack
@@ -569,6 +556,8 @@ namespace NDesk.DBus
 
 		/// <summary>
 		/// This seems to be for Register objects on a DBus server.
+		/// When method calls are made to the server Items in RegisteredObjects are used
+		/// to respond to them.
 		/// </summary>
 		/// <param name="path">Path.</param>
 		/// <param name="obj">Object.</param>
