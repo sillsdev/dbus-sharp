@@ -47,6 +47,7 @@
     <Compile Include="IntergrationTests\SystemBusTests.cs" />
     <Compile Include="ConnectionTests.cs" />
     <Compile Include="IntergrationTests\SessionBusTests.cs" />
+    <Compile Include="IntergrationTests\PrivateIBusTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
