@@ -3,10 +3,9 @@
 // See COPYING for details
 
 using System;
-using System.Text;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace NDesk.DBus
 {
@@ -57,6 +56,8 @@ namespace NDesk.DBus
 				return ReadVariant ();
 			} else if (type == typeof (string)) {
 				return ReadString ();
+			} else if (type == typeof(Struct) || type.IsSubclassOf(typeof(Struct))) {
+				return ReadStruct(type);
 			} else if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IDictionary<,>)) {
 				Type[] genArgs = type.GetGenericArguments ();
 				//Type dictType = typeof (Dictionary<,>).MakeGenericType (genArgs);
@@ -82,6 +83,8 @@ namespace NDesk.DBus
 		}
 
 		//helper method, should not be used generally
+		// NOTE: these methods have to be public because TypeImplementer.InitReaders iterates
+		// over all public methods
 		public object ReadValue (DType dtype)
 		{
 			switch (dtype)
@@ -149,6 +152,7 @@ namespace NDesk.DBus
 
 		public bool ReadBoolean ()
 		{
+			var oldPos = pos;
 			uint intval = ReadUInt32 ();
 
 			switch (intval) {
@@ -157,7 +161,7 @@ namespace NDesk.DBus
 				case 1:
 					return true;
 				default:
-					throw new Exception ("Read value " + intval + " at position " + pos + " while expecting boolean (0/1)");
+					throw new Exception ("Read value " + intval + " at position " + oldPos + " while expecting boolean (0/1)");
 			}
 		}
 
@@ -339,7 +343,7 @@ namespace NDesk.DBus
 		}
 
 		// Used primarily for reading variant values
-		object ReadValue (Signature sig)
+		private object ReadValue (Signature sig)
 		{
 			if (sig.IsPrimitive)
 				return ReadValue (sig[0]);
@@ -442,6 +446,12 @@ namespace NDesk.DBus
 		//there might be more elegant solutions
 		public object ReadStruct (Type type)
 		{
+			if (type == typeof(Struct))
+			{
+				ReadPad (8);
+				type = TypeDefiner.CreateStructType(ReadSignature());
+			}
+
 			ReadPad (8);
 
 			object val = Activator.CreateInstance (type);
@@ -490,5 +500,6 @@ namespace NDesk.DBus
 				if (data[pos] != 0)
 					throw new Exception ("Read non-zero byte at position " + pos + " while expecting padding");
 		}
+
 	}
 }
