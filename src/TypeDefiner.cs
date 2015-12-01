@@ -13,8 +13,8 @@ namespace NDesk.DBus
 {
 	static class TypeDefiner
 	{
-		static AssemblyBuilder asmBdef;
-		static ModuleBuilder modBdef;
+		internal static AssemblyBuilder asmBdef;
+		internal static ModuleBuilder modBdef;
 
 		static void InitHack ()
 		{
@@ -191,6 +191,25 @@ namespace NDesk.DBus
 			CustomAttributeBuilder cab = new CustomAttributeBuilder (interfaceAttributeCtor, new object[] {iface.Name});
 
 			typeB.SetCustomAttribute (cab);
+		}
+
+		internal static int dynamicTypeCount;
+
+		public static Type CreateStructType(Signature sig)
+		{
+			InitHack ();
+
+			var typeBuilder = modBdef.DefineType(string.Format("DynamicType{0}", dynamicTypeCount++),
+				TypeAttributes.Class, typeof(Struct));
+
+			int fieldCount = 0;
+			foreach (var field in sig.GetFieldSignatures())
+			{
+				var fieldName = string.Format("field_{0}", fieldCount++);
+				var t = field.ToType();
+				typeBuilder.DefineField(fieldName, t, FieldAttributes.Public);
+			}
+			return typeBuilder.CreateType();
 		}
 	}
 }

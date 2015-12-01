@@ -405,7 +405,7 @@ namespace NDesk.DBus
 		public bool IsPrimitive
 		{
 			get {
-				if (data.Length != 1)
+				if (data == null || data.Length != 1)
 					return false;
 
 				if (this[0] == DType.Variant)
@@ -515,26 +515,6 @@ namespace NDesk.DBus
 			return GetNextSignature (ref pos);
 		}
 
-		public Type[] ToTypes ()
-		{
-			// TODO: Find a way to avoid these null checks everywhere.
-			if (data == null)
-				return Type.EmptyTypes;
-
-			List<Type> types = new List<Type> ();
-			for (int i = 0 ; i != data.Length ; types.Add (ToType (ref i)));
-			return types.ToArray ();
-		}
-
-		public Type ToType ()
-		{
-			int pos = 0;
-			Type ret = ToType (ref pos);
-			if (pos != data.Length)
-				throw new Exception ("Signature '" + Value + "' is not a single complete type");
-			return ret;
-		}
-
 		internal static DType TypeCodeToDType (TypeCode typeCode)
 		{
 			switch (typeCode)
@@ -598,6 +578,9 @@ namespace NDesk.DBus
 			if (type == typeof (object))
 				return DType.Variant;
 
+			if (type == typeof(Dictionary<,>))
+				return DType.DictEntry;
+
 			if (type.IsPrimitive)
 				return TypeCodeToDType (Type.GetTypeCode (type));
 
@@ -607,6 +590,9 @@ namespace NDesk.DBus
 			//needs work
 			if (type.IsArray)
 				return DType.Array;
+
+			if (type == typeof(Struct) || type.IsSubclassOf(typeof(Struct)))
+				return DType.StructBegin;
 
 			//if (type.UnderlyingSystemType != null)
 			//	return TypeToDType (type.UnderlyingSystemType);
@@ -729,6 +715,15 @@ namespace NDesk.DBus
 			}
 		}
 
+		public Type ToType ()
+		{
+			int pos = 0;
+			Type ret = ToType (ref pos);
+			if (!ret.IsSubclassOf(typeof(Struct)) && data != null && pos != data.Length)
+				throw new Exception ("Signature '" + Value + "' is not a single complete type");
+			return ret;
+		}
+
 		public Type ToType (ref int pos)
 		{
 			// TODO: Find a way to avoid these null checks everywhere.
@@ -756,7 +751,7 @@ namespace NDesk.DBus
 					return typeof (long);
 				case DType.UInt64:
 					return typeof (ulong);
-				case DType.Single: ////not supported by libdbus at time of writing
+				case DType.Single: // not supported by libdbus at time of writing
 					return typeof (float);
 				case DType.Double:
 					return typeof (double);
@@ -777,38 +772,43 @@ namespace NDesk.DBus
 						pos++;
 						//return typeof (IDictionary<,>).MakeGenericType (new Type[] {keyType, valueType});
 						//workaround for Mono bug #81035 (memory leak)
-						return Mapper.GetGenericType (typeof (IDictionary<,>), new Type[] {keyType, valueType});
-					} else if ((DType)data[pos] == DType.StructBegin) {
-						//skip over the (
-						pos++;
-						while ((DType)data[pos] != DType.StructEnd)
-						{
-							Type unusedType = ToType(ref pos);
-							pos++;
-						}
-						//skip over the )
-						pos++;
-						return typeof (object[]);
-					} else {
-						return ToType (ref pos).MakeArrayType ();
+						return Mapper.GetGenericType(typeof(IDictionary<,>), new Type[] { keyType, valueType });
 					}
+					return GetNextSignature(ref pos).ToType().MakeArrayType();
 				case DType.Struct:
 					return typeof (ValueType);
 				case DType.StructBegin:
-					while ((DType)data[pos] != DType.StructEnd)
 					{
-						Type unusedType = ToType(ref pos);
+						if (!IsStruct)
+							throw new Exception("Struct '" + Value + "' is incomplete");
+						var type = TypeDefiner.CreateStructType(this);
+						// skip over struct
+						while ((DType)data[pos] != DType.StructEnd)
+						{
+							Type unusedType = ToType(ref pos);
+						}
+						//skip over the )
+						pos++;
+						return type;
 					}
-					//skip over the )
-					pos++;
-					return typeof (object);
 				case DType.DictEntry:
-					return typeof (System.Collections.Generic.KeyValuePair<,>);
+					return typeof (KeyValuePair<,>);
 				case DType.Variant:
 					return typeof (object);
 				default:
 					throw new NotSupportedException ("Parsing or converting this signature is not yet supported (signature was '" + this + "'), at DType." + dtype);
 			}
+		}
+
+		public Type[] ToTypes ()
+		{
+			// TODO: Find a way to avoid these null checks everywhere.
+			if (data == null)
+				return Type.EmptyTypes;
+
+			List<Type> types = new List<Type> ();
+			for (int i = 0 ; i != data.Length ; types.Add (ToType (ref i)));
+			return types.ToArray ();
 		}
 
 		public static Signature GetSig (object[] objs)
@@ -902,9 +902,9 @@ namespace NDesk.DBus
 		Signature = (byte)'g',
 
 		Array = (byte)'a',
-		[Obsolete ("Not in protocol")]
+		[Obsolete ("Reserved")]
 		Struct = (byte)'r',
-		[Obsolete ("Not in protocol")]
+		[Obsolete ("Reserved")]
 		DictEntry = (byte)'e',
 		Variant = (byte)'v',
 
