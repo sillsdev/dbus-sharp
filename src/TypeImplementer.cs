@@ -73,49 +73,6 @@ namespace NDesk.DBus
 
 			TypeBuilder typeB = modB.DefineType (proxyName, TypeAttributes.Class | TypeAttributes.Public, parentType);
 
-			if (false && !declType.IsInterface) {
-				foreach (MethodInfo mi in declType.GetMethods (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
-					MethodBody body = mi.GetMethodBody ();
-					Console.WriteLine(mi + ":");
-					foreach (LocalVariableInfo lvar in body.LocalVariables) {
-						Console.WriteLine(lvar.LocalIndex + ": " + lvar.LocalType);
-					}
-					Console.WriteLine();
-
-					//DynamicMethod method_builder = new DynamicMethod ("Write" + t.Name, typeof (void), new Type[] {typeof (MessageWriter), t}, typeof (MessageWriter));
-					//DynamicMethod dm = new DynamicMethod ("RepProx", typeof(void), new Type[] { typeof(object), typeof(int), typeof(string) }, typeof(object));
-					//DynamicILInfo dil = dm.GetDynamicILInfo ();
-					//dil.SetCode(body.GetILAsByteArray (), body.MaxStackSize);
-
-					//MethodBuilder mb = typeB.DefineMethod ("RepProx", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { typeof(object), typeof(int), typeof(string) });
-					//MethodBuilder mb = typeB.DefineMethod ("RepProx", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { declType, typeof(int), typeof(string) });
-					//
-
-				//MethodAttributes attrs = mi.Attributes;
-				//^ MethodAttributes.Abstract;
-				//attrs ^= MethodAttributes.NewSlot;
-				//attrs |= MethodAttributes.Final;
-
-				//MethodAttributes.Public
-				MethodAttributes attrs = MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig;
-				Console.WriteLine("cwl attrs: " + typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) }).Attributes);
-					//DynamicILInfo dil = mi.GetDynamicILInfo ();
-
-					ParameterInfo[] parms = mi.GetParameters();
-					//MethodBuilder mb = typeB.DefineMethod ("RepProx", attrs, typeof(void), new Type[] { typeof(int), typeof(string) });
-					//MethodBuilder mb = typeB.DefineMethod ("RepProx", attrs, typeof(void), new Type[] { declType, typeof(int), typeof(string) });
-					MethodBuilder mb = typeB.DefineMethod ("RepProx", attrs, typeof(void), new Type[] { typeof(object), typeof(int), typeof(string) });
-
-					mb.DefineParameter (0, ParameterAttributes.None, "self");
-					for (int i = 0; i < parms.Length ; i++) {
-						Console.WriteLine("i={0} pos={1} {2} {3}", i, parms[i].Position, parms[i].Attributes, parms[i]);
-						mb.DefineParameter (parms[i].Position + 1, parms[i].Attributes, parms[i].Name);
-					}
-
-				}
-			}
-
-
 			if (declType.IsInterface)
 				Implement (typeB, declType);
 
@@ -317,16 +274,6 @@ namespace NDesk.DBus
 				MethodInfo mi = typeof (MessageWriter).GetMethod ("WriteFromDict");
 				exactWriteMethod = mi.MakeGenericMethod (genArgs);
 				ilg.Emit (exactWriteMethod.IsFinal ? OpCodes.Call : OpCodes.Callvirt, exactWriteMethod);
-			} else if (false) {
-				//..boxed if necessary
-				if (t.IsValueType)
-					ilg.Emit (OpCodes.Box, t);
-
-				//the Type parameter
-				ilg.Emit (OpCodes.Ldtoken, t);
-				ilg.Emit (OpCodes.Call, getTypeFromHandleMethod);
-
-				ilg.Emit (messageWriterWriteMethod.IsFinal ? OpCodes.Call : OpCodes.Callvirt, messageWriterWriteMethod);
 			} else {
 				GenStructWriter (ilg, t);
 			}

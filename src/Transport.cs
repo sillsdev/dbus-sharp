@@ -146,7 +146,7 @@ namespace NDesk.DBus.Transports
 				try
 				{
 					nread = ns.Read(buffer, offset + read, count - read);
-				}catch(Exception e)
+				}catch(Exception)
 				{
 					if (!connection.IsConnected)
 						break;

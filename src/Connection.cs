@@ -332,7 +332,7 @@ namespace NDesk.DBus
 				}
 				connection.Close();
 			}
-			catch(Exception e)
+			catch(Exception)
 			{
 				connection.returnMessage = null;
 				connection.waitForReplyEvent.Set ();
