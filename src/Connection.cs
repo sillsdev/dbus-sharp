@@ -453,8 +453,20 @@ namespace NDesk.DBus
 					return;
 				}
 
-				//signals have no return value
-				dlg.DynamicInvoke (MessageHelper.GetDynamicValues (msg, mi.GetParameters ()));
+				try
+				{
+					//signals have no return value
+					dlg.DynamicInvoke (MessageHelper.GetDynamicValues (msg, mi.GetParameters ()));
+				}
+				catch(MemberAccessException)
+				{
+					throw;
+				}
+				catch(TargetInvocationException)
+				{
+					if (Protocol.Verbose)
+						Console.Error.WriteLine ("Error: Signal handler threw exception " + signal.Member);
+				}
 			} else {
 				//TODO: how should we handle this condition? sending an Error may not be appropriate in this case
 				if (Protocol.Verbose)
