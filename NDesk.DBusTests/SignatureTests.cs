@@ -110,7 +110,7 @@ namespace NDesk.DBusTests
 			var type = sut.ToType();
 
 			Assert.That(type.Name, Is.EqualTo("DynamicType0"));
-			Assert.That(type.IsSubclassOf(typeof(Struct)), Is.True);
+			Assert.That(type.IsSubclassOf(typeof(DValue)), Is.True);
 			return type.GetFields().Select(f => f.FieldType.Name).ToArray();
 		}
 
@@ -131,7 +131,7 @@ namespace NDesk.DBusTests
 
 			Assert.That(type.IsArray, Is.True);
 			Assert.That(type.GetElementType().Name, Is.EqualTo("DynamicType0"));
-			Assert.That(type.GetElementType().IsSubclassOf(typeof(Struct)), Is.True);
+			Assert.That(type.GetElementType().IsSubclassOf(typeof(DValue)), Is.True);
 		}
 
 		[Test]

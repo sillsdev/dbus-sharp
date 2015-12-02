@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace NDesk.DBus
 {
@@ -142,13 +143,25 @@ namespace NDesk.DBus
 	}
 
 	// Allows conversion of complex variants via System.Convert
-	class DValue : IConvertible
+	internal class DValue : IConvertible
 	{
 		// TODO: Note that we currently drop the originating Connection/Message details
 		// They may be useful later in conversion!
 
+		/// <summary>
+		/// Don't change the name of this field without out also changing the reflection code.
+		/// </summary>
+		[NonSerialized]
 		internal EndianFlag endianness;
+		/// <summary>
+		/// Don't change the name of this field without out also changing the reflection code.
+		/// </summary>
+		[NonSerialized]
 		internal Signature signature;
+		/// <summary>
+		/// Don't change the name of this field without out also changing the reflection code.
+		/// </summary>
+		[NonSerialized]
 		internal byte[] data;
 
 		public bool CanConvertTo (Type conversionType)

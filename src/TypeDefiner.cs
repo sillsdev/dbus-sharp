@@ -200,7 +200,7 @@ namespace NDesk.DBus
 			InitHack ();
 
 			var typeBuilder = modBdef.DefineType(string.Format("DynamicType{0}", dynamicTypeCount++),
-				TypeAttributes.Class, typeof(Struct));
+				TypeAttributes.Class, typeof(DValue));
 
 			int fieldCount = 0;
 			foreach (var field in sig.GetFieldSignatures())

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Linq;
 
 namespace NDesk.DBus
 {
@@ -337,9 +338,34 @@ namespace NDesk.DBus
 			return Signature.Take (sigData);
 		}
 
+		/// <summary>
+		/// Set the non serializable fields for a DValue instance.
+		/// Index to data should NOT include the signature.
+		/// </summary>
+		/// <param name="v">The DValue instance</param>
+		/// <param name="sig">The Signature of the data</param>
+		/// <param name="startPos">index of startPos in data.</param>
+		/// <param name="endPos">index of endPos in data</param>
+		private void SetDValueFields(object v, Signature sig, int startPos, int endPos)
+		{
+			typeof(DValue).GetField("endianness", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(v, endianness);
+			typeof(DValue).GetField("signature", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(v, sig);
+			var d = new byte[endPos - startPos];
+			Array.Copy(data, startPos, d, 0, d.Length);
+			typeof(DValue).GetField("data", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(v, d);
+		}
+
 		public object ReadVariant ()
 		{
-			return ReadValue (ReadSignature ());
+			var sig = ReadSignature();
+			int startPos = Protocol.Padded (pos, sig.Alignment);
+			var v =  ReadValue (sig);
+			int endPos = pos;
+
+			if (v != null && v.GetType().BaseType == typeof(DValue))
+				SetDValueFields(v, sig, startPos, endPos);
+
+			return v;
 		}
 
 		// Used primarily for reading variant values
@@ -446,14 +472,17 @@ namespace NDesk.DBus
 		//there might be more elegant solutions
 		public object ReadStruct (Type type)
 		{
+			Signature structSig = Signature.Empty;
 			if (type == typeof(Struct))
 			{
 				ReadPad (8);
-				type = TypeDefiner.CreateStructType(ReadSignature());
+				structSig = ReadSignature();
+				type = TypeDefiner.CreateStructType(structSig);
 			}
 
 			ReadPad (8);
 
+			int startPos = pos;
 			object val = Activator.CreateInstance (type);
 
 			/*
@@ -472,10 +501,18 @@ namespace NDesk.DBus
 			}
 			*/
 
-			FieldInfo[] fis = type.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			var fis = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(f => (f.Attributes & FieldAttributes.NotSerialized) == 0);
 
 			foreach (System.Reflection.FieldInfo fi in fis)
-				fi.SetValue (val, ReadValue (fi.FieldType));
+			{
+				fi.SetValue(val, ReadValue(fi.FieldType));
+			}
+
+			int endPos = pos;
+
+			if (structSig != Signature.Empty && val.GetType().BaseType == typeof(DValue))
+				SetDValueFields(val, structSig, startPos, endPos);
 
 			return val;
 		}

@@ -31,7 +31,7 @@ namespace NDesk.DBusTests
 			var t = TypeDefiner.CreateStructType(sig);
 
 			// Verify
-			Assert.That(t.IsSubclassOf(typeof(Struct)), Is.True);
+			Assert.That(t.IsSubclassOf(typeof(DValue)), Is.True);
 			var fields = t.GetFields();
 			Assert.That(fields.Select(t1 => t1.FieldType.Name), Is.EqualTo(fieldTypes));
 		}

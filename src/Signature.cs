@@ -283,8 +283,8 @@ namespace NDesk.DBus
 		public int Alignment
 		{
 			get {
-				if (data.Length == 0)
-					return 0;
+				if (data == null || data.Length == 0)
+					return 1;
 
 				return Protocol.GetAlignment (this[0]);
 			}

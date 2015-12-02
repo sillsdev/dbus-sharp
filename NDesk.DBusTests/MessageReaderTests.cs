@@ -112,6 +112,50 @@ namespace NDesk.DBusTests
 			Assert.AreEqual(typeof(string), obj.GetType());
 		}
 
+		struct TestClassA
+		{
+			public string str;
+			public IDictionary<string, object> dictionary;
+			public object[] array;
+		}
+
+		struct TestClassB
+		{
+			public string str;
+			public IDictionary<string, object> dictionary;
+			public uint U1;
+			public uint U2;
+			public uint U3;
+			public uint U4;
+		}
+
+		[Test]
+		public void ReadValue_object_VariantTypeIsStructContainingVariants()
+		{
+			var mr = new MessageReader(new Message());
+			mr.data = TestByteArrays.STRUCT_sa_DICT_sv_av;
+
+			var obj = mr.ReadValue(typeof(object));
+
+			Assert.AreEqual("(sa{sv}av)", obj.ToString());
+			Assert.AreEqual("DynamicType0", obj.GetType().Name);
+			var tcA = (TestClassA)Convert.ChangeType(obj, typeof(TestClassA));
+			Assert.AreEqual("IBusAttrList", tcA.str);
+			Assert.AreEqual(0, tcA.dictionary.Count);
+			Assert.AreEqual(3, tcA.array.Length);
+			var firstItemInArray = tcA.array[0];
+			Assert.AreEqual("(sa{sv}uuuu)", firstItemInArray.ToString());
+			Assert.AreEqual("(sa{sv}uuuu)", tcA.array[1].ToString());
+			Assert.AreEqual("(sa{sv}uuuu)", tcA.array[2].ToString());
+			var tcB = (TestClassB)Convert.ChangeType(firstItemInArray, typeof(TestClassB));
+			Assert.AreEqual("IBusAttribute", tcB.str);
+			Assert.AreEqual(0, tcB.dictionary.Count);
+			Assert.AreEqual(1, tcB.U1, "U1");
+			Assert.AreEqual(1, tcB.U2, "U2");
+			Assert.AreEqual(0, tcB.U3, "U3");
+			Assert.AreEqual(1, tcB.U4, "U4");
+		}
+
 		[Test]
 		public void ReadValue_DictionaryKObjectPathVString_DictionaryOfExpectedTypeIsReturnedAndContainsExpectedValues()
 		{
@@ -154,6 +198,11 @@ namespace NDesk.DBusTests
 			Assert.That(() => mr.ReadVariant(), Throws.Nothing);
 		}
 
+		internal struct TestSimpleStruct
+		{
+			public string str;
+		}
+
 		[Test]
 		public void ReadValue_StructSimple()
 		{
@@ -171,6 +220,9 @@ namespace NDesk.DBusTests
 			Assert.That(fields.Length, Is.EqualTo(1));
 			Assert.That(fields[0].FieldType, Is.EqualTo(typeof(string)));
 			Assert.That(fields[0].GetValue(obj), Is.EqualTo("A"));
+			var convertType = Convert.ChangeType(obj, typeof(TestSimpleStruct));
+			Assert.AreEqual(convertType.GetType(), typeof(TestSimpleStruct));
+			Assert.AreEqual("A", ((TestSimpleStruct)convertType).str);
 		}
 
 		[Test]
@@ -217,7 +269,7 @@ namespace NDesk.DBusTests
 			Assert.That(fields[0].GetValue(obj), Is.EqualTo("A"));
 			Assert.That(fields[1].FieldType, Is.EqualTo(typeof(int)));
 			Assert.That(fields[1].GetValue(obj), Is.EqualTo(15));
-			Assert.That(fields[2].FieldType.IsSubclassOf(typeof(Struct)), Is.True);
+			Assert.That(fields[2].FieldType.IsSubclassOf(typeof(DValue)), Is.True);
 			var subObj = fields[2].GetValue(obj);
 			var subFields = subObj.GetType().GetFields();
 			Assert.That(subFields[0].FieldType, Is.EqualTo(typeof(string)));

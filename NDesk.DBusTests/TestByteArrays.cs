@@ -22,6 +22,15 @@ namespace NDesk.DBusTests
 		public static readonly byte[] SIG_DICT_os = new byte[] { 5, 97, 123, 111, 115, 125, 0};
 		public static readonly byte[] VAR_STRING_C = new byte[] { 1, 115, 0, 0, 1, 0, 0, 0, 67, 0};
 		public static readonly byte[] VAR_DICT_os = new byte[] { 5, 97, 123, 111, 115, 125, 0, 0, 14, 0, 0, 0 , 0, 0, 0, 0, 1, 0, 0, 0, 67, 0,0, 0, 1, 0, 0, 0, 68, 0, 0, 0};
+		/// <summary>
+		/// (sa{sv}av)
+		/// Array variant type is (sa{sv}uuuu)
+		/// </summary>
+		public static readonly byte[] STRUCT_sa_DICT_sv_av = new byte[]
+		{
+			10,40,115,97,123,115,118,125,97,118,41,
+			0,0,0,0,0,12,0,0,0,73,66,117,115,65,116,116,114,76,105,115,116,0,0,0,0,0,0,0,0,172,0,0,0,12,40,115,97,123,115,118,125,117,117,117,117,41,0,0,0,0,0,0,0,13,0,0,0,73,66,117,115,65,116,116,114,105,98,117,116,101,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,12,40,115,97,123,115,118,125,117,117,117,117,41,0,0,0,13,0,0,0,73,66,117,115,65,116,116,114,105,98,117,116,101,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,12,40,115,97,123,115,118,125,117,117,117,117,41,0,0,0,13,0,0,0,73,66,117,115,65,116,116,114,105,98,117,116,101,0,0,0,0,0,0,0,3,0,0,0,240,200,200,0,0,0,0,0,1,0,0,0
+		};
 		public static readonly byte[] DICT_1_ss = new byte[] { 14, 0, 0, 0 , 0, 0, 0, 0, 1, 0, 0, 0, 67, 0,0, 0, 1, 0, 0, 0, 68, 0, 0, 0};
 		public static readonly byte[] DICT_2_ss =  new byte[] { 30, 0, 0, 0 , 0, 0, 0, 0,
 																	1, 0, 0, 0, 67, 0,0, 0, 1, 0, 0, 0, 68, 0, 0, 0,
@@ -29,7 +38,9 @@ namespace NDesk.DBusTests
 		public static readonly byte[] VAR_ARRAY_BYTE = new byte[] { 2, 97, 121, 0, 5, 0, 0, 0, 47, 109, 101, 100, 105, 0 };
 		public static readonly byte[] VAR_ARRAY_BYTE__IncludingNullTermInArray = new byte[] { 2, 97, 121, 0, 6, 0, 0, 0, 47, 109, 101, 100, 105, 0 };
 
-		// Dictionary<s, Dictionary<string, Dictionary<string, string>>>
+		/// <summary>
+		/// Dictionary<s, Dictionary<string, Dictionary<string, string>>>
+		/// </summary>
 		public static readonly byte[] DICT_1_sDICT_1_sDICT_1_ss =
 		new byte[] { 1, 0, 0, 0 , 0, 0, 0, 0,
 			// 1 item in Dictionary<s,Dictionary<string, Dictionary<string, string>>
@@ -47,7 +58,9 @@ namespace NDesk.DBusTests
 					1, 0, 0, 0, 70, 0, 0, 0,
 		};
 
-		// Dictionary<s, Dictionary<string, Dictionary<string, object>>>
+		/// <summary>
+		/// Dictionary<s, Dictionary<string, Dictionary<string, object>>>
+		/// </summary>
 		public static readonly byte[] DICT_1_sDICT_1_sDICT_1_so =
 			new byte[] { 32, 0, 0, 0 , 0, 0, 0, 0,
 			// 1 item in Dictionary<s,Dictionary<string, Dictionary<string, object>>
