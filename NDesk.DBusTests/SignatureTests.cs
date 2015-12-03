@@ -13,7 +13,6 @@ namespace NDesk.DBusTests
 		[SetUp]
 		public void SetUp()
 		{
-			TypeDefiner.dynamicTypeCount = 0;
 			TypeDefiner.asmBdef = null;
 			TypeDefiner.modBdef = null;
 		}
@@ -51,8 +50,8 @@ namespace NDesk.DBusTests
 			return s.ToTypes();
 		}
 
-		[TestCase("a(ss)", ExpectedResult = new[] { "DynamicType0[]" })]
-		[TestCase("(ios(ii))", ExpectedResult = new[] { "DynamicType0" })]
+		[TestCase("a(ss)", ExpectedResult = new[] { "DynamicType(ss)[]" })]
+		[TestCase("(ios(ii))", ExpectedResult = new[] { "DynamicType(ios(ii))" })]
 		public string[] ToTypes_DynamicTypes(string sig)
 		{
 			var s = new Signature(sig);
@@ -98,18 +97,18 @@ namespace NDesk.DBusTests
 
 		[TestCase("(sv)", ExpectedResult = new[] { "String", "Object" })]
 		[TestCase("(sa{sv}saa(s)s)",
-			ExpectedResult = new[] { "String", "IDictionary`2", "String", "DynamicType1[][]", "String" })]
+			ExpectedResult = new[] { "String", "IDictionary`2", "String", "DynamicType(s)[][]", "String" })]
 
 		// Testcases from spec (http://dbus.freedesktop.org/doc/dbus-specification.html#container-types)
-		[TestCase("(i(ii))", ExpectedResult = new[] { "Int32", "DynamicType1"})]
-		[TestCase("((ii)i)", ExpectedResult = new[] { "DynamicType1", "Int32"})]
+		[TestCase("(i(ii))", ExpectedResult = new[] { "Int32", "DynamicType(ii)"})]
+		[TestCase("((ii)i)", ExpectedResult = new[] { "DynamicType(ii)", "Int32"})]
 		[TestCase("(iii)", ExpectedResult = new[] { "Int32", "Int32", "Int32"})]
 		public string[] ToType_Struct(string signature)
 		{
 			var sut = new Signature(signature);
 			var type = sut.ToType();
 
-			Assert.That(type.Name, Is.EqualTo("DynamicType0"));
+			Assert.That(type.Name, Is.EqualTo("DynamicType" + sut.ToString()));
 			Assert.That(type.IsSubclassOf(typeof(DValue)), Is.True);
 			return type.GetFields().Select(f => f.FieldType.Name).ToArray();
 		}
@@ -130,7 +129,7 @@ namespace NDesk.DBusTests
 			var type = sut.ToType();
 
 			Assert.That(type.IsArray, Is.True);
-			Assert.That(type.GetElementType().Name, Is.EqualTo("DynamicType0"));
+			Assert.That(type.GetElementType().Name, Is.EqualTo("DynamicType(sv)"));
 			Assert.That(type.GetElementType().IsSubclassOf(typeof(DValue)), Is.True);
 		}
 

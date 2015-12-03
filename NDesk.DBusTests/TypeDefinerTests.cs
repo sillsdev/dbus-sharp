@@ -13,15 +13,14 @@ namespace NDesk.DBusTests
 		[SetUp]
 		public void SetUp()
 		{
-			TypeDefiner.dynamicTypeCount = 0;
 			TypeDefiner.asmBdef = null;
 			TypeDefiner.modBdef = null;
 		}
 
 		[TestCase("(s)", new[] { "String" })]
 		[TestCase("(si)", new[] { "String", "Int32" })]
-		[TestCase("(si(s))", new[] { "String", "Int32", "DynamicType1" })]
-		[TestCase("((si)s)", new[] { "DynamicType1", "String" })]
+		[TestCase("(si(s))", new[] { "String", "Int32", "DynamicType(s)" })]
+		[TestCase("((si)s)", new[] { "DynamicType(si)", "String" })]
 		public void CreateStructType(string signature, string[] fieldTypes)
 		{
 			// Setup

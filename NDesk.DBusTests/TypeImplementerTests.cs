@@ -28,7 +28,6 @@ namespace NDesk.DBusTests
 		[SetUp]
 		public void SetUp()
 		{
-			TypeDefiner.dynamicTypeCount = 0;
 			TypeDefiner.asmBdef = null;
 			TypeDefiner.modBdef = null;
 		}

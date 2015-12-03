@@ -6,7 +6,6 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
-
 using NDesk.DBus.Introspection;
 
 namespace NDesk.DBus
@@ -193,13 +192,16 @@ namespace NDesk.DBus
 			typeB.SetCustomAttribute (cab);
 		}
 
-		internal static int dynamicTypeCount;
-
 		public static Type CreateStructType(Signature sig)
 		{
 			InitHack ();
 
-			var typeBuilder = modBdef.DefineType(string.Format("DynamicType{0}", dynamicTypeCount++),
+			var typeName = "DynamicType" + sig.ToString();
+			var type = asmBdef.GetType(typeName, false);
+			if (type != null)
+				return type;
+
+			var typeBuilder = modBdef.DefineType(typeName,
 				TypeAttributes.Class, typeof(DValue));
 
 			int fieldCount = 0;

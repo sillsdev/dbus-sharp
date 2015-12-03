@@ -12,7 +12,6 @@ namespace NDesk.DBusTests
 		[SetUp]
 		public void SetUp()
 		{
-			TypeDefiner.dynamicTypeCount = 0;
 			TypeDefiner.asmBdef = null;
 			TypeDefiner.modBdef = null;
 		}
@@ -138,7 +137,7 @@ namespace NDesk.DBusTests
 			var obj = mr.ReadValue(typeof(object));
 
 			Assert.AreEqual("(sa{sv}av)", obj.ToString());
-			Assert.AreEqual("DynamicType0", obj.GetType().Name);
+			Assert.AreEqual("DynamicType(sa{sv}av)", obj.GetType().Name);
 			var tcA = (TestClassA)Convert.ChangeType(obj, typeof(TestClassA));
 			Assert.AreEqual("IBusAttrList", tcA.str);
 			Assert.AreEqual(0, tcA.dictionary.Count);
