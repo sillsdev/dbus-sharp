@@ -74,7 +74,6 @@
     <None Include="packages.config" />
     <None Include="NuGetAssets\NDesk.DBus.nuspec" />
     <None Include="NuGetAssets\NDesk.DBus.targets" />
-    <Compile Include="Struct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NDesk.DBus.dll.config">

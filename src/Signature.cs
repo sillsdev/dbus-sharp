@@ -591,9 +591,6 @@ namespace NDesk.DBus
 			if (type.IsArray)
 				return DType.Array;
 
-			if (type == typeof(Struct) || type.IsSubclassOf(typeof(Struct)))
-				return DType.StructBegin;
-
 			//if (type.UnderlyingSystemType != null)
 			//	return TypeToDType (type.UnderlyingSystemType);
 			if (Mapper.IsPublic (type))
@@ -719,7 +716,7 @@ namespace NDesk.DBus
 		{
 			int pos = 0;
 			Type ret = ToType (ref pos);
-			if (!ret.IsSubclassOf(typeof(Struct)) && data != null && pos != data.Length)
+			if (data != null && pos != data.Length)
 				throw new Exception ("Signature '" + Value + "' is not a single complete type");
 			return ret;
 		}

@@ -213,7 +213,7 @@ namespace NDesk.DBusTests
 			var sut = new MessageReader(msg);
 
 			// Execute
-			var obj = sut.ReadValue(typeof(Struct));
+			var obj = sut.ReadValue(typeof(object));
 
 			// Verify
 			var fields = obj.GetType().GetFields();
@@ -236,7 +236,7 @@ namespace NDesk.DBusTests
 			var sut = new MessageReader(msg);
 
 			// Execute
-			var obj = sut.ReadValue(typeof(Struct));
+			var obj = sut.ReadValue(typeof(object));
 
 			// Verify
 			var fields = obj.GetType().GetFields();
@@ -260,7 +260,7 @@ namespace NDesk.DBusTests
 			var sut = new MessageReader(msg);
 
 			// Execute
-			var obj = sut.ReadValue(typeof(Struct));
+			var obj = sut.ReadValue(typeof(object));
 
 			// Verify
 			var fields = obj.GetType().GetFields();

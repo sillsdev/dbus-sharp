@@ -57,8 +57,6 @@ namespace NDesk.DBus
 				return ReadVariant ();
 			} else if (type == typeof (string)) {
 				return ReadString ();
-			} else if (type == typeof(Struct) || type.IsSubclassOf(typeof(Struct))) {
-				return ReadStruct(type);
 			} else if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IDictionary<,>)) {
 				Type[] genArgs = type.GetGenericArguments ();
 				//Type dictType = typeof (Dictionary<,>).MakeGenericType (genArgs);
@@ -473,12 +471,6 @@ namespace NDesk.DBus
 		public object ReadStruct (Type type)
 		{
 			Signature structSig = Signature.Empty;
-			if (type == typeof(Struct))
-			{
-				ReadPad (8);
-				structSig = ReadSignature();
-				type = TypeDefiner.CreateStructType(structSig);
-			}
 
 			ReadPad (8);
 
