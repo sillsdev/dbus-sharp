@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace NDesk.DBus
 {
-	internal partial class MessageReader
+	public partial class MessageReader
 	{
 		protected EndianFlag endianness;
 		//protected byte[] data;

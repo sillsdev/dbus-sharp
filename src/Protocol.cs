@@ -9,7 +9,7 @@ namespace NDesk.DBus
 {
 	//yyyyuua{yv}
 	//struct Header
-	internal class Header
+	public class Header
 	{
 		public EndianFlag Endianness;
 		public MessageType MessageType;
@@ -179,7 +179,7 @@ namespace NDesk.DBus
 	}
 	*/
 
-	internal enum MessageType : byte
+	public enum MessageType : byte
 	{
 		//This is an invalid type.
 		Invalid,
@@ -193,7 +193,7 @@ namespace NDesk.DBus
 		Signal,
 	}
 
-	internal enum FieldCode : byte
+	public enum FieldCode : byte
 	{
 		Invalid,
 			Path,
@@ -209,14 +209,14 @@ namespace NDesk.DBus
 #endif
 	}
 
-	internal enum EndianFlag : byte
+	public enum EndianFlag : byte
 	{
 		Little = (byte)'l',
 		Big = (byte)'B',
 	}
 
 	[Flags]
-	internal enum HeaderFlag : byte
+	public enum HeaderFlag : byte
 	{
 		None = 0,
 		NoReplyExpected = 0x1,
@@ -344,7 +344,7 @@ namespace NDesk.DBus
 		*/
 	}
 
-	static class Protocol
+	public static class Protocol
 	{
 		//protocol versions that we support
 		public const byte MinVersion = 0;
@@ -433,7 +433,7 @@ namespace NDesk.DBus
 	}
 
 	// Currently only for internal use on exported objects
-	class BusException : Exception
+	public class BusException : Exception
 	{
 		public BusException (string errorName, string errorMessage)
 		{

@@ -15,7 +15,7 @@ namespace NDesk.DBus
 
 	//using System.Runtime.InteropServices;
 	//[StructLayout (LayoutKind.Sequential)]
-	internal unsafe struct UUID
+	public unsafe struct UUID
 	{
 		private int a, b, c, d;
 		const int ByteLength = 16;
@@ -172,7 +172,7 @@ namespace NDesk.DBus.Authentication
 		WaitingForBegin,
 	}
 
-	class AuthCommand
+	public class AuthCommand
 	{
 		/*
 		public AuthCommand (string value)
@@ -214,7 +214,7 @@ namespace NDesk.DBus.Authentication
 		public readonly string Value;
 	}
 
-	class SaslPeer : IEnumerable<AuthCommand>
+	public class SaslPeer : IEnumerable<AuthCommand>
 	{
 		//public Connection conn;
 		public SaslPeer Peer;
@@ -396,7 +396,7 @@ namespace NDesk.DBus.Authentication
 		public UUID ActualId = UUID.Zero;
 	}
 
-	class SaslServer : SaslPeer
+	public class SaslServer : SaslPeer
 	{
 		//public int MaxFailures = 10;
 		public UUID Guid = UUID.Zero;

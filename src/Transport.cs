@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace NDesk.DBus.Transports
 {
-	internal abstract class Transport
+	public abstract class Transport
 	{
 		public static Transport Create (AddressEntry entry)
 		{
@@ -92,7 +92,7 @@ namespace NDesk.DBus.Transports
 				WakeUp (this, EventArgs.Empty);
 		}
 
-		internal Message TryReadMessage ()
+		public Message TryReadMessage ()
 		{
 			GetData ();
 			if (Inbound.Count > 0)
@@ -105,7 +105,7 @@ namespace NDesk.DBus.Transports
 			GetData ();
 		}
 
-		virtual internal Message ReadMessage ()
+		public virtual Message ReadMessage ()
 		{
 			// Hack to complete pending async reads in progress.
 			while (msgRdr != null)
@@ -122,7 +122,7 @@ namespace NDesk.DBus.Transports
 			}
 		}
 
-		protected virtual int Read (byte[] buffer, int offset, int count)
+		public virtual int Read (byte[] buffer, int offset, int count)
 		{
 			int read = 0;
 			//System.Net.Sockets.NetworkStream nns = ns as System.Net.Sockets.NetworkStream;
@@ -396,7 +396,7 @@ namespace NDesk.DBus.Transports
 		}
 
 		object writeLock = new object ();
-		internal virtual void WriteMessage (Message msg)
+		public virtual void WriteMessage (Message msg)
 		{
 			/*
 			byte[] HeaderData = msg.GetHeaderData ();

@@ -12,7 +12,7 @@ using System.Reflection;
 namespace NDesk.DBus
 {
 	//maybe this should be nullable?
-	internal struct Signature
+	public struct Signature
 	{
 		//TODO: this class needs some work
 		//Data should probably include the null terminator
@@ -158,7 +158,7 @@ namespace NDesk.DBus
 			return sig;
 		}
 
-		internal Signature (DType value)
+		public Signature (DType value)
 		{
 			this.data = DataForDType (value);
 		}
@@ -190,7 +190,7 @@ namespace NDesk.DBus
 			return data;
 		}
 
-		internal DType this[int index]
+		public DType this[int index]
 		{
 			get {
 				return (DType)data[index];
@@ -561,7 +561,7 @@ namespace NDesk.DBus
 		}
 
 		//FIXME: this method is bad, get rid of it
-		internal static DType TypeToDType (Type type)
+		public static DType TypeToDType (Type type)
 		{
 			if (type == typeof (void))
 				return DType.Invalid;

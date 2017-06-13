@@ -7,7 +7,7 @@ using System.IO;
 
 namespace NDesk.DBus.Transports
 {
-	abstract class UnixTransport : Transport
+	public abstract class UnixTransport : Transport
 	{
 		public override void Open (AddressEntry entry)
 		{

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace NDesk.DBus
 {
-	class BusObject
+	public class BusObject
 	{
 		internal protected Connection conn;
 		internal string bus_name;

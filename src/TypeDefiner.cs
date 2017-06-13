@@ -10,10 +10,10 @@ using NDesk.DBus.Introspection;
 
 namespace NDesk.DBus
 {
-	static class TypeDefiner
+	public static class TypeDefiner
 	{
-		internal static AssemblyBuilder asmBdef;
-		internal static ModuleBuilder modBdef;
+		public static AssemblyBuilder asmBdef;
+		public static ModuleBuilder modBdef;
 
 		static void InitHack ()
 		{

@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace NDesk.DBus
 {
-	internal class Message
+	public class Message
 	{
 		public Message ()
 		{
@@ -143,7 +143,7 @@ namespace NDesk.DBus
 	}
 
 	// Allows conversion of complex variants via System.Convert
-	internal class DValue : IConvertible
+	public class DValue : IConvertible
 	{
 		// TODO: Note that we currently drop the originating Connection/Message details
 		// They may be useful later in conversion!
@@ -288,7 +288,7 @@ namespace NDesk.DBus
 		}
 	}
 
-	partial class MessageReader
+	public partial class MessageReader
 	{
 		// Note: This method doesn't support aggregate signatures
 		public bool StepOver (Signature sig)
@@ -390,7 +390,7 @@ namespace NDesk.DBus
 		}
 	}
 
-	class MessageDumper
+	public class MessageDumper
 	{
 		public static byte[] ReadBlock (TextReader r)
 		{

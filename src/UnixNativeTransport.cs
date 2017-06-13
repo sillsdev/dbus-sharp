@@ -15,10 +15,10 @@ using NDesk.Unix;
 
 namespace NDesk.DBus.Transports
 {
-	class UnixNativeTransport : UnixTransport
+	public class UnixNativeTransport : UnixTransport
 	{
 		//protected UnixSocket socket;
-		internal UnixSocket socket;
+		public UnixSocket socket;
 
 		public override string AuthString ()
 		{

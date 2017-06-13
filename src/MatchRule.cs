@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace NDesk.DBus
 {
-	class MatchRule
+	public class MatchRule
 	{
 		public MessageType? MessageType;
 		public readonly SortedList<FieldCode,MatchTest> Fields = new SortedList<FieldCode,MatchTest> ();
@@ -242,7 +242,7 @@ namespace NDesk.DBus
 		}
 	}
 
-	struct ArgMatchTest
+	public struct ArgMatchTest
 	{
 		public int ArgNum;
 		public Signature Signature;
@@ -290,7 +290,7 @@ namespace NDesk.DBus
 	}
 	*/
 
-	class MatchTest
+	public class MatchTest
 	{
 		public Signature Signature;
 		public object Value;

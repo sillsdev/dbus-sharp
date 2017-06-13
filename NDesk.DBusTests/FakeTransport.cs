@@ -43,7 +43,7 @@ namespace NDesk.DBusTests
 
 		}
 
-		protected override int Read(byte[] buffer, int offset, int count)
+		public override int Read(byte[] buffer, int offset, int count)
 		{
 			var ret = Math.Min(_buffer.Length - _index, offset + count);
 			Array.Copy(_buffer, _index + offset, buffer, 0, ret - offset);
@@ -51,12 +51,12 @@ namespace NDesk.DBusTests
 			return ret - offset;
 		}
 
-		internal override void WriteMessage(Message msg)
+		public override void WriteMessage(Message msg)
 		{
 			Console.WriteLine("Wrote message {0}", msg);
 		}
 
-		internal override Message ReadMessage()
+		public override Message ReadMessage()
 		{
 			if (_messages == null)
 				return base.ReadMessage();

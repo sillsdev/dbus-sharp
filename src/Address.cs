@@ -23,7 +23,7 @@ namespace NDesk.DBus
 		public BadAddressException (string reason) : base (reason) {}
 	}
 
-	internal class AddressEntry
+	public class AddressEntry
 	{
 		public string Method;
 		public readonly IDictionary<string,string> Properties = new Dictionary<string,string> ();
@@ -135,7 +135,7 @@ namespace NDesk.DBus
 		}
 	}
 
-	static class Address
+	public static class Address
 	{
 		//(unix:(path|abstract)=.*,guid=.*|tcp:host=.*(,port=.*)?);? ...
 		public static AddressEntry[] Parse (string addresses)
