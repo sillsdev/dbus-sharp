@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace NDesk.DBus
 {
-	class BusObject
+	public class BusObject
 	{
 		internal protected Connection conn;
 		internal string bus_name;
@@ -72,7 +72,7 @@ namespace NDesk.DBus
 			}
 		}
 
-		public void SendSignal (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
+		internal void SendSignal (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
 		{
 			exception = null;
 
@@ -89,7 +89,7 @@ namespace NDesk.DBus
 			conn.Send (signalMsg);
 		}
 
-		public MessageReader SendMethodCall (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
+		internal MessageReader SendMethodCall (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
 		{
 			exception = null;
 
