@@ -13,7 +13,7 @@ namespace NDesk.DBus
 
 	//FIXME: signature sending/receiving is currently ambiguous in this code
 	//FIXME: in fact, these classes are totally broken and end up doing no-op, do not use without understanding the problem
-	class MethodCall
+	public class MethodCall
 	{
 		public Message message = new Message ();
 
@@ -103,7 +103,7 @@ namespace NDesk.DBus
 		public uint ReplySerial;
 	}
 
-	class Error
+	public class Error
 	{
 		public Message message = new Message ();
 
@@ -128,7 +128,7 @@ namespace NDesk.DBus
 		//public Signature Signature;
 	}
 
-	class Signal
+	public class Signal
 	{
 		public Message message = new Message ();
 

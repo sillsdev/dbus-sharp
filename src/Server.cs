@@ -19,7 +19,7 @@ namespace NDesk.DBus
 	using Authentication;
 
 	//TODO: complete this class
-	abstract class Server
+		public abstract class Server
 	{
 		// Was Listen()
 		public static Server ListenAt (string address)

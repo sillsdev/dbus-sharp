@@ -9,7 +9,7 @@ using System.Net.Sockets;
 
 namespace NDesk.DBus.Transports
 {
-	class SocketTransport : Transport
+	public class SocketTransport : Transport
 	{
 		internal Socket socket;
 

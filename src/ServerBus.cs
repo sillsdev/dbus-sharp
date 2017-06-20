@@ -566,7 +566,7 @@ namespace NDesk.DBus
 
 		bool shouldDump = false;
 
-		override internal void HandleMessage (Message msg)
+		public override void HandleMessage (Message msg)
 		{
 			if (!isConnected)
 				return;
@@ -622,7 +622,7 @@ namespace NDesk.DBus
 			}
 		}
 
-		override internal uint Send (Message msg)
+		public override uint Send (Message msg)
 		{
 			if (!isConnected)
 				return 0;
@@ -702,7 +702,7 @@ namespace NDesk.DBus
 		public string SenderName = null;
 	}
 
-	class DBusException : BusException
+	public class DBusException : BusException
 	{
 		public DBusException (string errorNameSuffix, string format, params object[] args)
 			: base (ServerBus.DBusInterface + ".Error." + errorNameSuffix, format, args)

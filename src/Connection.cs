@@ -18,7 +18,7 @@ namespace NDesk.DBus
 	public class Connection
 	{
 		Transport transport;
-		internal Transport Transport {
+		public Transport Transport {
 			get {
 				return transport;
 			} set {
@@ -29,7 +29,7 @@ namespace NDesk.DBus
 
 		protected Connection () {}
 
-		internal Connection (Transport transport)
+		public Connection (Transport transport)
 		{
 			this.transport = transport;
 			transport.Connection = this;
@@ -70,7 +70,7 @@ namespace NDesk.DBus
 			return GetObject (type, bus_name, path);
 		}
 
-		internal bool isConnected = false;
+		public bool isConnected = false;
 		public bool IsConnected
 		{
 			get {
@@ -121,7 +121,7 @@ namespace NDesk.DBus
 			isConnected = true;
 		}
 
-		internal UUID Id = UUID.Zero;
+		public UUID Id = UUID.Zero;
 
 		void Authenticate ()
 		{
@@ -150,8 +150,8 @@ namespace NDesk.DBus
 			//(((SocketTransport)Transport).socket).Blocking = false;
 		}
 
-		internal bool isAuthenticated = false;
-		internal bool IsAuthenticated
+		public bool isAuthenticated = false;
+		public bool IsAuthenticated
 		{
 			get {
 				return isAuthenticated;
@@ -214,7 +214,7 @@ namespace NDesk.DBus
 			return pending;
 		}
 
-		internal virtual uint Send (Message msg)
+		public virtual uint Send (Message msg)
 		{
 			if (msg.Header.Serial == 0)
 				msg.Header.Serial = GenerateSerial ();
@@ -362,7 +362,7 @@ namespace NDesk.DBus
 			DispatchSignals ();
 		}
 
-		internal virtual void HandleMessage (Message msg)
+		public virtual void HandleMessage (Message msg)
 		{
 			if (msg == null)
 				return;
@@ -621,11 +621,11 @@ namespace NDesk.DBus
 		}
 
 		//these look out of place, but are useful
-		internal protected virtual void AddMatch (string rule)
+		public virtual void AddMatch (string rule)
 		{
 		}
 
-		internal protected virtual void RemoveMatch (string rule)
+		public virtual void RemoveMatch (string rule)
 		{
 		}
 
@@ -633,7 +633,7 @@ namespace NDesk.DBus
 		const string machineUuidFilename = @"/var/lib/dbus/machine-id";
 		static UUID? machineId = null;
 		private static object idReadLock = new object ();
-		internal static UUID MachineId
+		public static UUID MachineId
 		{
 			get {
 				lock (idReadLock) {

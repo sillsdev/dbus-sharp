@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace NDesk.DBus
 {
-	sealed class MessageWriter
+	public sealed class MessageWriter
 	{
 		EndianFlag endianness;
 		internal MemoryStream stream;

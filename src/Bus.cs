@@ -166,12 +166,12 @@ namespace NDesk.DBus
 			return bus.StartServiceByName (name, flags);
 		}
 
-		internal protected override void AddMatch (string rule)
+		public override void AddMatch (string rule)
 		{
 			bus.AddMatch (rule);
 		}
 
-		internal protected override void RemoveMatch (string rule)
+		public override void RemoveMatch (string rule)
 		{
 			bus.RemoveMatch (rule);
 		}

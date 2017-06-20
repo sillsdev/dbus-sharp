@@ -29,7 +29,7 @@ namespace NDesk.Unix
 	// socklen_t: assumed to be 4 bytes
 	// uid_t: assumed to be 4 bytes
 
-	sealed class UnixStream : Stream //, IDisposable
+		public sealed class UnixStream : Stream //, IDisposable
 	{
 		readonly UnixSocket _usock;
 		bool _shutdown = false;
@@ -194,7 +194,7 @@ namespace NDesk.Unix
 	}
 
 	//[StructLayout(LayoutKind.Sequential, Pack=1)]
-	unsafe struct IOVector
+	public unsafe struct IOVector
 	{
 		public IOVector (IntPtr bbase, int length)
 		{
@@ -223,7 +223,7 @@ namespace NDesk.Unix
 	}
 	*/
 
-	unsafe class UnixSocket
+	public unsafe class UnixSocket
 	{
 		internal const string LIBC = "libc";
 

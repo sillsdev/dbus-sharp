@@ -209,7 +209,7 @@ namespace NDesk.DBus
 	}
 
 	//TODO: this class is messy, move the methods somewhere more appropriate
-	static class MessageHelper
+	public static class MessageHelper
 	{
 		public static Message CreateUnknownMethodError (MethodCall method_call)
 		{
