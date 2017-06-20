@@ -72,7 +72,7 @@ namespace NDesk.DBus
 			}
 		}
 
-		internal void SendSignal (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
+		public void SendSignal (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
 		{
 			exception = null;
 
@@ -89,7 +89,7 @@ namespace NDesk.DBus
 			conn.Send (signalMsg);
 		}
 
-		internal MessageReader SendMethodCall (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
+		public MessageReader SendMethodCall (string iface, string member, string inSigStr, MessageWriter writer, Type retType, out Exception exception)
 		{
 			exception = null;
 
