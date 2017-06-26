@@ -2,15 +2,15 @@
 <package  xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
 	<id>NDesk.DBus</id>
-	<title>dbus-sharp</title>
+	<title>NDesk.DBus</title>
 	<version>$version$</version>
 	<authors>Alp Toker, Tom Hindle</authors>
 	<owners>Tom Hindle, Eberhard Beilharz</owners>
 	<licenseUrl>https://bitbucket.org/hindlemail/dbus-sharp/src/tip/COPYING</licenseUrl>
 	<projectUrl>https://bitbucket.org/hindlemail/dbus-sharp</projectUrl>
 	<requireLicenseAcceptance>false</requireLicenseAcceptance>
-	<description>D-Bus IPC protocol library and CLR binding</description>
-	<copyright>Copyright 2015</copyright>
+	<description>D-Bus IPC protocol library and CLR binding (also known as dbus-sharp)</description>
+	<copyright>Copyright 2015-2017</copyright>
 	<tags>dbus</tags>
 	<dependencies>
 	</dependencies>
