@@ -1,16 +1,15 @@
-D-Bus for .NET
-==============
+# D-Bus for .NET
 
 This is a C# implementation of D-Bus. It's often referred to as "managed
 D-Bus" to avoid confusion with existing bindings (which wrap libdbus).
 
-See http://www.ndesk.org/DBusSharp
+See <http://www.ndesk.org/DBusSharp>
 
 D-Bus is an inter-process communication framework that lets applications
 interface with the system event bus as well as allowing them to talk to
 one another in a peer-to-peer configuration.
 
-See http://www.freedesktop.org/wiki/Software/dbus for general
+See <http://www.freedesktop.org/wiki/Software/dbus> for general
 information on the D-Bus IPC mechanism.
 
 This software is under active development but is already used by a wide
@@ -36,8 +35,6 @@ a consideration.
 --
 Alp Toker <alp@atoker.com>
 
-
-Building
-========
+## Building
 
 xbuild NDesk.DBus.sln
