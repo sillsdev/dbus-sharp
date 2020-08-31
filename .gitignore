@@ -1,4 +1,4 @@
-syntax: glob
+
 NDesk.DBusTests/bin/
 NDesk.DBusTests/obj/
 src/bin/
